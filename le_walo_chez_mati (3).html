@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Le Walo – Chez Mati</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--gold:#C8960C;--gold-light:#F5D77A;--dark-green:#1A3A2A;--mid-green:#2D5A3D;--red:#8B1A1A;--cream:#FDF6E3;--cream-dark:#F0E4C0;--text-dark:#1A1A1A;--text-mid:#4A3A2A;--shadow:0 4px 20px rgba(0,0,0,0.15);--radius:12px;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Poppins',sans-serif;background:var(--cream);color:var(--text-dark);min-height:100vh;overflow-x:hidden;}
+
+#splash{position:fixed;inset:0;background:var(--dark-green);z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity 0.8s;}
+#splash.hide{opacity:0;pointer-events:none;}
+.splash-logo{font-family:'Playfair Display',serif;color:var(--gold);font-size:52px;text-align:center;line-height:1.1;}
+.splash-sub{color:var(--gold-light);font-size:16px;margin-top:8px;letter-spacing:2px;}
+.splash-wave{display:flex;gap:8px;margin-top:32px;}
+.splash-wave span{width:10px;height:10px;background:var(--gold);border-radius:50%;animation:wave 1.2s infinite ease-in-out;}
+.splash-wave span:nth-child(2){animation-delay:.2s;}
+.splash-wave span:nth-child(3){animation-delay:.4s;}
+@keyframes wave{0%,100%{transform:translateY(0);}50%{transform:translateY(-14px);}}
+
+#mati-bubble{position:fixed;bottom:24px;right:24px;z-index:500;display:flex;flex-direction:column;align-items:flex-end;gap:12px;}
+#mati-btn{width:64px;height:64px;border-radius:50%;background:var(--gold);border:3px solid var(--dark-green);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:28px;box-shadow:var(--shadow);animation:pulse 3s infinite;}
+@keyframes pulse{0%,100%{transform:scale(1);}50%{transform:scale(1.07);}}
+#mati-panel{background:var(--dark-green);border-radius:var(--radius);width:320px;max-height:420px;display:none;flex-direction:column;box-shadow:var(--shadow);overflow:hidden;}
+#mati-panel.open{display:flex;}
+#mati-header{background:var(--gold);padding:12px 16px;display:flex;align-items:center;gap:10px;justify-content:space-between;}
+#mati-header span{font-weight:600;color:var(--dark-green);font-size:15px;}
+#mati-close{background:none;border:none;cursor:pointer;font-size:20px;color:var(--dark-green);}
+#mati-msgs{flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:8px;}
+.msg{max-width:85%;padding:8px 12px;border-radius:10px;font-size:13px;line-height:1.5;}
+.msg.ai{background:#2D5A3D;color:#F5D77A;align-self:flex-start;}
+.msg.user{background:var(--gold);color:var(--dark-green);align-self:flex-end;}
+#mati-input-row{display:flex;padding:10px;gap:8px;border-top:1px solid #2D5A3D;}
+#mati-input{flex:1;background:#1A3A2A;border:1px solid #3D6A4D;border-radius:8px;color:#F5D77A;padding:8px 10px;font-size:13px;outline:none;}
+#mati-send{background:var(--gold);border:none;border-radius:8px;padding:0 14px;cursor:pointer;color:var(--dark-green);font-weight:600;font-size:18px;}
+
+nav{background:var(--dark-green);padding:14px 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 2px 12px rgba(0,0,0,0.3);flex-wrap:wrap;gap:10px;}
+.nav-logo{font-family:'Playfair Display',serif;color:var(--gold);font-size:24px;}
+.nav-logo span{color:var(--cream);font-size:13px;display:block;font-family:'Poppins',sans-serif;font-weight:300;letter-spacing:1px;}
+.nav-tabs{display:flex;gap:4px;flex-wrap:wrap;}
+.nav-tab{background:none;border:none;color:var(--cream-dark);padding:8px 14px;border-radius:8px;cursor:pointer;font-size:13px;font-family:'Poppins',sans-serif;transition:all .2s;}
+.nav-tab.active,.nav-tab:hover{background:var(--gold);color:var(--dark-green);font-weight:600;}
+.cart-btn{background:var(--red);color:white;border:none;border-radius:8px;padding:8px 16px;cursor:pointer;font-family:'Poppins',sans-serif;font-size:13px;font-weight:600;position:relative;}
+.cart-badge{position:absolute;top:-6px;right:-6px;background:var(--gold);color:var(--dark-green);border-radius:50%;width:20px;height:20px;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;}
+
+.page{display:none;padding:24px 20px;max-width:960px;margin:0 auto;}
+.page.active{display:block;}
+
+.hero{background:linear-gradient(135deg,var(--dark-green),var(--mid-green));border-radius:16px;padding:32px;text-align:center;margin-bottom:28px;position:relative;overflow:hidden;}
+.hero h1{font-family:'Playfair Display',serif;color:var(--gold);font-size:38px;line-height:1.1;}
+.hero p{color:var(--cream-dark);margin-top:8px;font-size:14px;letter-spacing:1px;}
+.hero .tagline{color:var(--gold-light);font-style:italic;font-size:16px;margin-top:6px;}
+.order-cta{display:inline-flex;align-items:center;gap:8px;background:var(--gold);color:var(--dark-green);padding:14px 28px;border-radius:10px;font-weight:700;font-size:15px;margin-top:16px;border:none;cursor:pointer;font-family:'Poppins',sans-serif;}
+
+.cat-bar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px;}
+.cat-btn{background:white;border:2px solid var(--gold);color:var(--text-mid);padding:7px 16px;border-radius:20px;cursor:pointer;font-size:13px;font-family:'Poppins',sans-serif;transition:all .2s;}
+.cat-btn.active,.cat-btn:hover{background:var(--gold);color:var(--dark-green);font-weight:600;}
+
+.section-title{font-family:'Playfair Display',serif;color:var(--dark-green);font-size:22px;border-left:4px solid var(--gold);padding-left:12px;margin-bottom:16px;}
+.product-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px;margin-bottom:28px;}
+.product-card{background:white;border-radius:var(--radius);overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,0.08);transition:transform .2s,box-shadow .2s;position:relative;}
+.product-card:hover{transform:translateY(-3px);box-shadow:var(--shadow);}
+.prod-img{width:100%;height:150px;object-fit:cover;display:block;}
+.prod-img-fallback{width:100%;height:150px;background:var(--cream-dark);display:flex;align-items:center;justify-content:center;font-size:52px;}
+.prod-body{padding:14px;}
+.prod-name{font-weight:600;font-size:13px;color:var(--text-dark);margin-bottom:4px;line-height:1.4;}
+.prod-price{color:var(--gold);font-weight:700;font-size:16px;}
+.prod-cat{font-size:11px;color:var(--text-mid);background:var(--cream-dark);padding:2px 8px;border-radius:10px;display:inline-block;margin-bottom:6px;}
+.add-btn{width:100%;background:var(--dark-green);color:var(--gold);border:none;padding:9px;border-radius:8px;cursor:pointer;font-weight:600;font-size:13px;font-family:'Poppins',sans-serif;margin-top:8px;}
+.add-btn:hover{background:var(--mid-green);}
+.stock-badge{position:absolute;top:10px;right:10px;color:white;font-size:10px;font-weight:700;padding:3px 8px;border-radius:10px;}
+.stock-ok{background:#2D7A4D;}
+.stock-warn{background:#B8860B;}
+.stock-low{background:#8B1A1A;animation:blink 1s infinite;}
+@keyframes blink{0%,100%{opacity:1;}50%{opacity:.4;}}
+
+#cart-panel{position:fixed;top:0;right:-420px;width:400px;height:100vh;background:white;z-index:300;box-shadow:-4px 0 24px rgba(0,0,0,0.2);transition:right .3s;display:flex;flex-direction:column;}
+#cart-panel.open{right:0;}
+.cart-header{background:var(--dark-green);padding:18px;display:flex;align-items:center;justify-content:space-between;}
+.cart-header h2{color:var(--gold);font-family:'Playfair Display',serif;font-size:22px;}
+#close-cart{background:none;border:none;color:white;font-size:22px;cursor:pointer;}
+.cart-items{flex:1;overflow-y:auto;padding:16px;}
+.cart-item{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid #eee;}
+.ci-img{width:48px;height:48px;border-radius:8px;object-fit:cover;}
+.ci-info{flex:1;}
+.ci-name{font-weight:600;font-size:13px;}
+.ci-price{color:var(--gold);font-weight:700;font-size:13px;}
+.ci-qty{display:flex;align-items:center;gap:8px;}
+.ci-qty button{background:var(--cream-dark);border:none;border-radius:6px;width:26px;height:26px;cursor:pointer;font-weight:700;}
+.cart-footer{padding:16px;border-top:2px solid var(--cream-dark);}
+.cart-total{display:flex;justify-content:space-between;font-size:18px;font-weight:700;margin-bottom:12px;}
+.cart-total span{color:var(--gold);}
+.wa-btn{display:flex;align-items:center;justify-content:center;gap:8px;background:#25D366;color:white;border:none;width:100%;padding:14px;border-radius:10px;font-size:15px;font-weight:700;font-family:'Poppins',sans-serif;cursor:pointer;}
+
+.caisse-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px;}
+.stat-card{background:white;border-radius:var(--radius);padding:20px;box-shadow:0 2px 10px rgba(0,0,0,.07);text-align:center;}
+.stat-num{font-family:'Playfair Display',serif;font-size:32px;color:var(--dark-green);}
+.stat-label{font-size:13px;color:var(--text-mid);margin-top:4px;}
+.sale-form{background:white;border-radius:var(--radius);padding:20px;box-shadow:0 2px 10px rgba(0,0,0,.07);margin-bottom:20px;}
+.sale-form h3{font-family:'Playfair Display',serif;color:var(--dark-green);margin-bottom:14px;}
+.form-row{display:flex;gap:10px;margin-bottom:10px;flex-wrap:wrap;}
+.form-row select,.form-row input{flex:1;padding:10px 12px;border:1.5px solid #ddd;border-radius:8px;font-family:'Poppins',sans-serif;font-size:13px;min-width:120px;}
+.btn-gold{background:var(--gold);color:var(--dark-green);border:none;padding:10px 22px;border-radius:8px;font-weight:700;font-size:14px;cursor:pointer;font-family:'Poppins',sans-serif;}
+.btn-red{background:var(--red);color:white;border:none;padding:10px 22px;border-radius:8px;font-weight:700;font-size:14px;cursor:pointer;font-family:'Poppins',sans-serif;}
+table.sales-table{width:100%;border-collapse:collapse;font-size:13px;}
+table.sales-table th{background:var(--dark-green);color:var(--gold);padding:10px 12px;text-align:left;}
+table.sales-table td{padding:10px 12px;border-bottom:1px solid #eee;}
+table.sales-table tr:nth-child(even) td{background:#f9f5ec;}
+
+.stock-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px;}
+.stock-item{background:white;border-radius:var(--radius);padding:16px;box-shadow:0 2px 8px rgba(0,0,0,.07);}
+.stock-item .s-name{font-weight:600;font-size:13px;margin-bottom:8px;}
+.stock-qty{display:flex;align-items:center;gap:8px;margin-bottom:8px;}
+.stock-qty input{width:60px;padding:5px 8px;border:1.5px solid #ddd;border-radius:6px;font-size:14px;text-align:center;}
+.stock-bar{height:6px;border-radius:3px;background:#eee;margin-top:8px;}
+.stock-bar-fill{height:100%;border-radius:3px;transition:width .3s;}
+
+#notif-container{position:fixed;top:20px;left:50%;transform:translateX(-50%);z-index:1000;display:flex;flex-direction:column;gap:10px;pointer-events:none;width:90%;max-width:400px;}
+.notif{color:white;padding:14px 24px;border-radius:10px;font-weight:600;font-size:14px;box-shadow:var(--shadow);animation:slideIn .3s ease;text-align:center;}
+@keyframes slideIn{from{transform:translateY(-20px);opacity:0;}to{transform:translateY(0);opacity:1;}}
+
+.rapport-header{background:var(--dark-green);color:var(--cream);border-radius:var(--radius);padding:20px;margin-bottom:20px;display:flex;justify-content:space-between;align-items:center;}
+.rapport-header h2{font-family:'Playfair Display',serif;color:var(--gold);}
+
+#overlay{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:299;display:none;}
+#overlay.show{display:block;}
+</style>
+</head>
+<body>
+
+<div id="splash">
+  <div class="splash-logo">Le Walo<br><span style="font-size:26px;color:#F5D77A;">Chez Mati</span></div>
+  <div class="splash-sub">✨ La Reine du Tchep ✨</div>
+  <div class="splash-wave"><span></span><span></span><span></span></div>
+</div>
+
+<div id="notif-container"></div>
+<div id="overlay" onclick="closeCart()"></div>
+
+<nav>
+  <div class="nav-logo">Le Walo <span>Chez Mati</span></div>
+  <div class="nav-tabs">
+    <button class="nav-tab active" onclick="showPage('menu',this)">🍽 Menu</button>
+    <button class="nav-tab" onclick="showPage('caisse',this)">💰 Caisse</button>
+    <button class="nav-tab" onclick="showPage('stock',this)">📦 Stock</button>
+    <button class="nav-tab" onclick="showPage('rapport',this)">📊 Rapport</button>
+  </div>
+  <button class="cart-btn" onclick="toggleCart()">🛒 Panier <span class="cart-badge" id="cart-count">0</span></button>
+</nav>
+
+<div id="cart-panel">
+  <div class="cart-header">
+    <h2>🛒 Mon Panier</h2>
+    <button id="close-cart" onclick="closeCart()">✕</button>
+  </div>
+  <div class="cart-items" id="cart-items-list"></div>
+  <div class="cart-footer">
+    <div class="cart-total">Total : <span id="cart-total-price">0 F</span></div>
+    <button class="wa-btn" onclick="orderWhatsApp()">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+      Commander via WhatsApp
+    </button>
+  </div>
+</div>
+
+<div id="mati-bubble">
+  <div id="mati-panel">
+    <div id="mati-header">
+      <span>👑 Mati – Votre assistante</span>
+      <button id="mati-close" onclick="toggleMati()">✕</button>
+    </div>
+    <div id="mati-msgs"></div>
+    <div id="mati-input-row">
+      <input id="mati-input" placeholder="Posez une question..." onkeydown="if(event.key==='Enter')sendMati()"/>
+      <button id="mati-send" onclick="sendMati()">➤</button>
+    </div>
+  </div>
+  <button id="mati-btn" onclick="toggleMati()">👑</button>
+</div>
+
+<!-- PAGE MENU -->
+<div id="page-menu" class="page active">
+  <div class="hero">
+    <div style="font-size:64px;margin-bottom:8px;">👑</div>
+    <h1>Le Walo<br><span style="font-size:24px;color:#F5D77A;">Chez Mati</span></h1>
+    <div class="tagline">La Reine du Tchep</div>
+    <p>Le goût dans vos assiettes</p>
+    <button class="order-cta" onclick="document.getElementById('cat-bar').scrollIntoView({behavior:'smooth'})">🍽 Voir le Menu</button>
+  </div>
+  <div class="cat-bar" id="cat-bar"></div>
+  <div id="menu-container"></div>
+</div>
+
+<!-- PAGE CAISSE -->
+<div id="page-caisse" class="page">
+  <h2 class="section-title">💰 Caisse du Jour</h2>
+  <div class="caisse-grid">
+    <div class="stat-card"><div class="stat-num" id="stat-ventes">0</div><div class="stat-label">Articles vendus</div></div>
+    <div class="stat-card"><div class="stat-num" id="stat-ca" style="font-size:22px;">0 F</div><div class="stat-label">Chiffre d'affaires</div></div>
+    <div class="stat-card"><div class="stat-num" id="stat-commandes">0</div><div class="stat-label">Commandes</div></div>
+    <div class="stat-card"><div class="stat-num" id="stat-moy" style="font-size:22px;">0 F</div><div class="stat-label">Panier moyen</div></div>
+  </div>
+  <div class="sale-form">
+    <h3>➕ Enregistrer une vente</h3>
+    <div class="form-row">
+      <select id="sale-product"></select>
+      <input type="number" id="sale-qty" placeholder="Quantité" value="1" min="1" style="max-width:100px;"/>
+      <input type="text" id="sale-client" placeholder="Nom client (optionnel)"/>
+    </div>
+    <div class="form-row">
+      <select id="sale-payment">
+        <option>Espèces</option>
+        <option>Mobile Money</option>
+        <option>WhatsApp</option>
+      </select>
+      <button class="btn-gold" onclick="recordSale()">✔ Valider</button>
+      <button class="btn-red" onclick="clearSales()">🗑 Effacer journée</button>
+    </div>
+  </div>
+  <h3 style="font-family:'Playfair Display',serif;color:var(--dark-green);margin-bottom:12px;">📋 Transactions du jour</h3>
+  <div style="overflow-x:auto;">
+    <table class="sales-table"><thead><tr><th>Heure</th><th>Produit</th><th>Qté</th><th>Montant</th><th>Client</th><th>Paiement</th></tr></thead>
+    <tbody id="sales-tbody"></tbody></table>
+  </div>
+</div>
+
+<!-- PAGE STOCK -->
+<div id="page-stock" class="page">
+  <h2 class="section-title">📦 Gestion des Stocks</h2>
+  <p style="color:var(--text-mid);margin-bottom:20px;font-size:14px;">⚠️ Alerte automatique à 3 unités ou moins.</p>
+  <div class="stock-grid" id="stock-grid"></div>
+</div>
+
+<!-- PAGE RAPPORT -->
+<div id="page-rapport" class="page">
+  <div class="rapport-header">
+    <div>
+      <h2>📊 Rapport de Fin de Journée</h2>
+      <p style="color:var(--cream-dark);font-size:13px;margin-top:4px;" id="rapport-date"></p>
+    </div>
+    <button class="btn-gold" onclick="window.print()">🖨 Imprimer</button>
+  </div>
+  <div id="rapport-content"></div>
+</div>
+
+<script>
+const MENU = [
+  {id:1,  name:"Petit déjeuner – Omelette au plat", cat:"Entrées",             price:0,    img:"https://images.unsplash.com/photo-1510693206972-df098062cb71?w=400&q=80"},
+  {id:2,  name:"Avocat au thon",                   cat:"Entrées",             price:0,    img:"https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=400&q=80"},
+  {id:3,  name:"Avocat aux œufs durs",             cat:"Entrées",             price:0,    img:"https://images.unsplash.com/photo-1525351484163-7529414344d8?w=400&q=80"},
+  {id:4,  name:"Macédoine de légumes",             cat:"Entrées",             price:0,    img:"https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?w=400&q=80"},
+  {id:5,  name:"Café",                             cat:"Entrées",             price:500,  img:"https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=400&q=80"},
+  {id:6,  name:"Thé",                              cat:"Entrées",             price:500,  img:"https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&q=80"},
+  {id:7,  name:"Nescafé",                          cat:"Entrées",             price:500,  img:"https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=400&q=80"},
+  {id:10, name:"Tchep blanc au poisson",           cat:"Thiéboudiène",        price:3000, img:"https://images.unsplash.com/photo-1574484284002-952d92456975?w=400&q=80"},
+  {id:11, name:"Tchep blanc au poulet",            cat:"Thiéboudiène",        price:3000, img:"https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=400&q=80"},
+  {id:12, name:"Tchep blanc à la viande de bœuf", cat:"Thiéboudiène",        price:3000, img:"https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=400&q=80"},
+  {id:13, name:"Tchep au mouton",                  cat:"Thiéboudiène",        price:4000, img:"https://images.unsplash.com/photo-1547592180-85f173990554?w=400&q=80"},
+  {id:14, name:"Tchep aux boulettes de poisson",  cat:"Thiéboudiène",        price:3000, img:"https://images.unsplash.com/photo-1519984388953-d2406bc725e1?w=400&q=80"},
+  {id:20, name:"Sauce claire",                     cat:"Riz & Sauces",        price:2000, img:"https://images.unsplash.com/photo-1455619452474-d2be8b1e70cd?w=400&q=80"},
+  {id:21, name:"Sauce arachide poulet/poisson",   cat:"Riz & Sauces",        price:3000, img:"https://images.unsplash.com/photo-1604329760661-e71dc83f8f26?w=400&q=80"},
+  {id:22, name:"Sauce feuille",                    cat:"Riz & Sauces",        price:2000, img:"https://images.unsplash.com/photo-1476224203421-9ac39bcb3327?w=400&q=80"},
+  {id:23, name:"Sauce graine",                     cat:"Riz & Sauces",        price:2000, img:"https://images.unsplash.com/photo-1547592166-23ac45744acd?w=400&q=80"},
+  {id:24, name:"Sauce djoumblé",                  cat:"Riz & Sauces",        price:2000, img:"https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=400&q=80"},
+  {id:25, name:"Sauce yassa au poulet",            cat:"Riz & Sauces",        price:3000, img:"https://images.unsplash.com/photo-1598103442097-8b74394b95c8?w=400&q=80"},
+  {id:26, name:"Sauce yassa au mouton",            cat:"Riz & Sauces",        price:4000, img:"https://images.unsplash.com/photo-1574484284002-952d92456975?w=400&q=80"},
+  {id:27, name:"Kedjenou de poulet",               cat:"Riz & Sauces",        price:3000, img:"https://images.unsplash.com/photo-1512058564366-18510be2db19?w=400&q=80"},
+  {id:28, name:"Gouagouassou",                     cat:"Riz & Sauces",        price:3000, img:"https://images.unsplash.com/photo-1504544750208-dc0358e63f7f?w=400&q=80"},
+  {id:29, name:"Soupe du pêcheur",                cat:"Riz & Sauces",        price:5000, img:"https://images.unsplash.com/photo-1559847844-5315695dadae?w=400&q=80"},
+  {id:30, name:"Poulet braisé",                    cat:"Spécialités du Soir", price:4000, img:"https://images.unsplash.com/photo-1532550907401-a500c9a57435?w=400&q=80"},
+  {id:31, name:"Poisson braisé",                   cat:"Spécialités du Soir", price:4000, img:"https://images.unsplash.com/photo-1519984388953-d2406bc725e1?w=400&q=80"},
+  {id:32, name:"Poisson au four",                  cat:"Spécialités du Soir", price:4500, img:"https://images.unsplash.com/photo-1467003909585-2f8a72700288?w=400&q=80"},
+  {id:33, name:"Poulet au four",                   cat:"Spécialités du Soir", price:4500, img:"https://images.unsplash.com/photo-1598103442097-8b74394b95c8?w=400&q=80"},
+  {id:40, name:"Thé à la menthe",                  cat:"Boissons Chaudes",    price:1000, img:"https://images.unsplash.com/photo-1556679343-c7306c1976bc?w=400&q=80"},
+  {id:50, name:"Cocktail Mati du Paradis",         cat:"Boissons Fraîches",   price:1000, img:"https://images.unsplash.com/photo-1497534446932-c925b458314e?w=400&q=80"},
+  {id:51, name:"Cocktail des Caviars",             cat:"Boissons Fraîches",   price:3000, img:"https://images.unsplash.com/photo-1536935338788-846bb9981813?w=400&q=80"},
+  {id:52, name:"Bissap (1,5L)",                    cat:"Jus Naturels",        price:3000, img:"https://images.unsplash.com/photo-1596803244535-925769f389fc?w=400&q=80"},
+  {id:53, name:"Gingembre",                        cat:"Jus Naturels",        price:3000, img:"https://images.unsplash.com/photo-1571091718767-18b5b1457add?w=400&q=80"},
+  {id:54, name:"Tamarin",                          cat:"Jus Naturels",        price:3000, img:"https://images.unsplash.com/photo-1565958011703-44f9829ba187?w=400&q=80"},
+];
+
+const CATS = ["Tout",...new Set(MENU.map(p=>p.cat))];
+let cart=[], sales=JSON.parse(localStorage.getItem('walo_sales')||'[]');
+let stock=JSON.parse(localStorage.getItem('walo_stock')||'{}');
+let matiOpen=false, alarmTimers={};
+
+MENU.forEach(p=>{if(!(p.id in stock))stock[p.id]=p.stock||20;});
+saveStock();
+
+function saveStock(){localStorage.setItem('walo_stock',JSON.stringify(stock));}
+function saveSales(){localStorage.setItem('walo_sales',JSON.stringify(sales));}
+
+setTimeout(()=>{
+  document.getElementById('splash').classList.add('hide');
+  setTimeout(()=>{
+    document.getElementById('splash').style.display='none';
+    openMatiWelcome();
+    checkAllStocks();
+  },900);
+},2800);
+
+function showPage(p,btn){
+  document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(x=>x.classList.remove('active'));
+  document.getElementById('page-'+p).classList.add('active');
+  if(btn) btn.classList.add('active');
+  if(p==='caisse') renderCaisse();
+  if(p==='stock') renderStock();
+  if(p==='rapport') renderRapport();
+}
+
+function catEmoji(c){
+  return {Entrées:'🥗',Thiéboudiène:'🍚','Riz & Sauces':'🍲','Spécialités du Soir':'🌙','Boissons Chaudes':'☕','Boissons Fraîches':'🥤','Jus Naturels':'🌿'}[c]||'🍽';
+}
+
+function renderMenu(filter='Tout'){
+  const cats = filter==='Tout'?[...new Set(MENU.map(p=>p.cat))]:[filter];
+  document.getElementById('menu-container').innerHTML = cats.map(cat=>{
+    const prods = MENU.filter(p=>p.cat===cat);
+    if(!prods.length) return '';
+    return `<h2 class="section-title">${catEmoji(cat)} ${cat}</h2>
+    <div class="product-grid">${prods.map(productCard).join('')}</div>`;
+  }).join('');
+}
+
+function productCard(p){
+  const s=stock[p.id]||0;
+  const badgeClass = s<=3?'stock-low stock-badge':s<=6?'stock-warn stock-badge':'stock-ok stock-badge';
+  const price = p.price===0?'Sur demande':p.price.toLocaleString()+' F';
+  return `<div class="product-card">
+    <span class="${badgeClass}">${s<=3?'⚠️ '+s:s}</span>
+    <img class="prod-img" src="${p.img}" alt="${p.name}" onerror="this.style.display='none';this.nextSibling.style.display='flex'"/>
+    <div class="prod-img-fallback" style="display:none">🍽</div>
+    <div class="prod-body">
+      <div class="prod-cat">${p.cat}</div>
+      <div class="prod-name">${p.name}</div>
+      <div class="prod-price">${price}</div>
+      <button class="add-btn" onclick="addToCart(${p.id})" ${s===0?'disabled style="opacity:.4;cursor:not-allowed;"':''}>
+        ${s===0?'Rupture':'+ Ajouter au panier'}
+      </button>
+    </div>
+  </div>`;
+}
+
+function renderCatBar(){
+  document.getElementById('cat-bar').innerHTML = CATS.map(c=>
+    `<button class="cat-btn${c==='Tout'?' active':''}" onclick="filterCat('${c}',this)">${catEmoji(c)} ${c}</button>`
+  ).join('');
+}
+function filterCat(c,btn){
+  document.querySelectorAll('.cat-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderMenu(c);
+}
+
+function addToCart(id){
+  const p=MENU.find(x=>x.id===id);
+  const ex=cart.find(x=>x.id===id);
+  if(ex) ex.qty++; else cart.push({...p,qty:1});
+  updateCartUI();
+  showNotif('✅ '+p.name+' ajouté !','#2D7A4D');
+}
+
+function updateCartUI(){
+  const total=cart.reduce((s,x)=>s+x.price*x.qty,0);
+  document.getElementById('cart-count').textContent=cart.reduce((s,x)=>s+x.qty,0);
+  document.getElementById('cart-total-price').textContent=total.toLocaleString()+' F';
+  document.getElementById('cart-items-list').innerHTML=cart.length===0
+    ?'<p style="text-align:center;color:#999;padding:20px;font-size:14px;">Votre panier est vide</p>'
+    :cart.map(item=>`<div class="cart-item">
+      <img class="ci-img" src="${item.img}" alt="${item.name}" onerror="this.style.display='none'"/>
+      <div class="ci-info"><div class="ci-name">${item.name}</div><div class="ci-price">${(item.price*item.qty).toLocaleString()} F</div></div>
+      <div class="ci-qty">
+        <button onclick="changeQty(${item.id},-1)">−</button>
+        <span style="font-weight:600;min-width:20px;text-align:center;">${item.qty}</span>
+        <button onclick="changeQty(${item.id},1)">+</button>
+      </div></div>`).join('');
+}
+
+function changeQty(id,d){
+  const i=cart.findIndex(x=>x.id===id);
+  if(i===-1) return;
+  cart[i].qty+=d;
+  if(cart[i].qty<=0) cart.splice(i,1);
+  updateCartUI();
+}
+
+function toggleCart(){
+  document.getElementById('cart-panel').classList.toggle('open');
+  document.getElementById('overlay').classList.toggle('show');
+}
+function closeCart(){
+  document.getElementById('cart-panel').classList.remove('open');
+  document.getElementById('overlay').classList.remove('show');
+}
+
+function orderWhatsApp(){
+  if(!cart.length){showNotif('⚠️ Panier vide !','#8B1A1A');return;}
+  const total=cart.reduce((s,x)=>s+x.price*x.qty,0);
+  let msg='🌟 *Commande – Le Walo Chez Mati* 🌟\n\n';
+  cart.forEach(i=>{msg+=`• ${i.name} x${i.qty} = ${(i.price*i.qty).toLocaleString()} F\n`;});
+  msg+=`\n💰 *Total : ${total.toLocaleString()} F*\n\nMerci et à bientôt ! 👑`;
+  const nums=['2250787483004','2250102052010'];
+  window.open('https://wa.me/'+nums[0]+'?text='+encodeURIComponent(msg),'_blank');
+  cart.forEach(item=>recordSaleData(item.id,item.qty,'WhatsApp',''));
+  cart=[];updateCartUI();closeCart();
+}
+
+function todaySales(){
+  const today=new Date().toDateString();
+  return sales.filter(s=>new Date(s.date).toDateString()===today);
+}
+
+function renderCaisse(){
+  const s=todaySales();
+  const total=s.reduce((a,x)=>a+x.total,0);
+  document.getElementById('stat-ventes').textContent=s.reduce((a,x)=>a+x.qty,0);
+  document.getElementById('stat-ca').textContent=total.toLocaleString()+' F';
+  document.getElementById('stat-commandes').textContent=s.length;
+  document.getElementById('stat-moy').textContent=s.length?Math.round(total/s.length).toLocaleString()+' F':'0 F';
+  document.getElementById('sale-product').innerHTML=MENU.map(p=>`<option value="${p.id}">${p.name} – ${p.price.toLocaleString()} F</option>`).join('');
+  document.getElementById('sales-tbody').innerHTML=s.slice().reverse().map(x=>
+    `<tr><td>${x.time}</td><td>${x.product}</td><td>${x.qty}</td><td>${x.total.toLocaleString()} F</td><td>${x.client||'–'}</td><td>${x.payment}</td></tr>`
+  ).join('')||'<tr><td colspan="6" style="text-align:center;color:#999;padding:20px;">Aucune vente aujourd\'hui</td></tr>';
+}
+
+function recordSale(){
+  const id=parseInt(document.getElementById('sale-product').value);
+  const qty=parseInt(document.getElementById('sale-qty').value)||1;
+  const client=document.getElementById('sale-client').value;
+  const payment=document.getElementById('sale-payment').value;
+  recordSaleData(id,qty,payment,client);
+  document.getElementById('sale-qty').value=1;
+  document.getElementById('sale-client').value='';
+  renderCaisse();
+  showNotif('✅ Vente enregistrée !','#2D7A4D');
+}
+
+function recordSaleData(id,qty,payment,client){
+  const p=MENU.find(x=>x.id===id);if(!p) return;
+  sales.push({date:new Date().toISOString(),time:new Date().toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'}),product:p.name,qty,total:p.price*qty,client,payment,productId:id});
+  stock[id]=Math.max(0,(stock[id]||0)-qty);
+  saveStock();saveSales();checkStock(id);
+}
+
+function clearSales(){
+  if(!confirm('Effacer toutes les ventes du jour ?')) return;
+  const today=new Date().toDateString();
+  sales=sales.filter(s=>new Date(s.date).toDateString()!==today);
+  saveSales();renderCaisse();
+  showNotif('🗑 Journée effacée','#B8860B');
+}
+
+function renderStock(){
+  document.getElementById('stock-grid').innerHTML=MENU.map(p=>{
+    const s=stock[p.id]||0;
+    const max=p.stock||20;
+    const pct=Math.min(100,Math.round(s/max*100));
+    const col=s<=3?'#C0392B':s<=6?'#E67E22':'#27AE60';
+    return `<div class="stock-item">
+      <div class="s-name">${p.name}</div>
+      <div style="font-size:11px;color:#888;margin-bottom:8px;">${p.cat}</div>
+      <div class="stock-qty">
+        <input type="number" value="${s}" min="0" onchange="updateStock(${p.id},this.value)" style="border-color:${s<=3?'#C0392B':'#ddd'}"/>
+        <button style="background:var(--dark-green);color:var(--gold);border:none;border-radius:6px;padding:5px 10px;cursor:pointer;font-size:12px;font-weight:600;" onclick="addStock(${p.id})">+10</button>
+      </div>
+      <div class="stock-bar"><div class="stock-bar-fill" style="width:${pct}%;background:${col};"></div></div>
+      ${s<=3?'<p style="color:#C0392B;font-size:11px;margin-top:6px;font-weight:600;">⚠️ Stock critique !</p>':''}
+    </div>`;
+  }).join('');
+}
+
+function updateStock(id,val){stock[id]=Math.max(0,parseInt(val)||0);saveStock();checkStock(id);renderStock();}
+function addStock(id){stock[id]=(stock[id]||0)+10;saveStock();renderStock();showNotif('📦 Stock +10','#2D7A4D');}
+
+function checkStock(id){if((stock[id]||0)<=3){const p=MENU.find(x=>x.id===id);if(p)triggerAlarm(p);}}
+function checkAllStocks(){MENU.forEach(p=>{if((stock[p.id]||0)<=3)triggerAlarm(p);});}
+
+function triggerAlarm(p){
+  if(alarmTimers[p.id]) return;
+  let n=0;
+  alarmTimers[p.id]=setInterval(()=>{
+    n++;
+    showNotif('🚨 ALERTE STOCK : '+p.name+' – Reste '+stock[p.id]+' !','#8B1A1A');
+    if(n>=3){clearInterval(alarmTimers[p.id]);delete alarmTimers[p.id];}
+  },1500);
+}
+
+function renderRapport(){
+  document.getElementById('rapport-date').textContent=new Date().toLocaleDateString('fr-FR',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+  const s=todaySales();
+  const total=s.reduce((a,x)=>a+x.total,0);
+  const byProd={};s.forEach(x=>{byProd[x.product]=(byProd[x.product]||0)+x.qty;});
+  const top=Object.entries(byProd).sort((a,b)=>b[1]-a[1]).slice(0,5);
+  document.getElementById('rapport-content').innerHTML=`
+    <div class="caisse-grid">
+      <div class="stat-card"><div class="stat-num">${s.reduce((a,x)=>a+x.qty,0)}</div><div class="stat-label">Articles vendus</div></div>
+      <div class="stat-card"><div class="stat-num" style="font-size:20px;">${total.toLocaleString()} F</div><div class="stat-label">CA Total</div></div>
+      <div class="stat-card"><div class="stat-num">${s.length}</div><div class="stat-label">Transactions</div></div>
+      <div class="stat-card"><div class="stat-num" style="font-size:20px;">${s.length?Math.round(total/s.length).toLocaleString():0} F</div><div class="stat-label">Panier moyen</div></div>
+    </div>
+    <div style="background:white;border-radius:12px;padding:20px;box-shadow:0 2px 10px rgba(0,0,0,.07);margin-bottom:20px;">
+      <h3 style="font-family:'Playfair Display',serif;color:var(--dark-green);margin-bottom:14px;">🏆 Top Produits</h3>
+      ${top.length?top.map((x,i)=>`<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #eee;font-size:14px;"><span>${['🥇','🥈','🥉','4️⃣','5️⃣'][i]} ${x[0]}</span><span style="font-weight:700;color:var(--gold);">${x[1]} vendus</span></div>`).join(''):'<p style="color:#999;font-size:14px;">Aucune vente</p>'}
+    </div>
+    <div style="background:white;border-radius:12px;padding:20px;box-shadow:0 2px 10px rgba(0,0,0,.07);">
+      <h3 style="font-family:'Playfair Display',serif;color:var(--dark-green);margin-bottom:14px;">⚠️ Alertes Stock</h3>
+      ${MENU.filter(p=>(stock[p.id]||0)<=3).map(p=>`<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #eee;font-size:14px;"><span>${p.name}</span><span style="color:var(--red);font-weight:700;">Reste: ${stock[p.id]||0}</span></div>`).join('')||'<p style="color:#2D7A4D;font-size:14px;">✅ Stocks suffisants</p>'}
+    </div>`;
+}
+
+function showNotif(msg,bg){
+  const el=document.createElement('div');
+  el.className='notif';el.textContent=msg;el.style.background=bg||'#8B1A1A';
+  document.getElementById('notif-container').appendChild(el);
+  setTimeout(()=>el.remove(),3500);
+}
+
+const MATI_SYS=`Tu es Mati, l'assistante virtuelle du restaurant Le Walo Chez Mati à Abidjan. Chaleureuse et professionnelle. Tu connais parfaitement le menu. Réponds en français, 2-3 phrases max.
+
+MENU: Entrées (omelette, avocat thon/œufs, macédoine, café/thé/nescafé 500F). Thiéboudiène: tchep poisson/poulet/bœuf 3000F, mouton 4000F, boulettes 3000F. Riz&Sauces: claire/feuille/graine/djoumblé 2000F, arachide/yassa poulet/kedjenou/gouagouassou 3000F, yassa mouton 4000F, soupe pêcheur 5000F. Spécialités soir: poulet/poisson braisé 4000F, au four 4500F. Boissons: thé menthe 1000F, cocktail Mati 1000F, cocktail Caviars 3000F, bissap/gingembre/tamarin 3000F. Commandes WhatsApp: +225 0787483004 ou +225 0102052010.`;
+
+function toggleMati(){matiOpen=!matiOpen;document.getElementById('mati-panel').classList.toggle('open',matiOpen);}
+
+function openMatiWelcome(){
+  const w="👑 Bienvenue chez Le Walo Chez Mati ! Je suis Mati, votre assistante. Comment puis-je vous aider ?";
+  addMatiMsg(w,'ai');speakMati(w);
+  setTimeout(()=>{document.getElementById('mati-panel').classList.add('open');matiOpen=true;},3200);
+}
+
+function speakMati(t){
+  if(!window.speechSynthesis) return;
+  window.speechSynthesis.cancel();
+  const u=new SpeechSynthesisUtterance(t);
+  u.lang='fr-FR';u.rate=0.95;u.pitch=1.1;
+  window.speechSynthesis.speak(u);
+}
+
+function addMatiMsg(text,role){
+  const el=document.createElement('div');
+  el.className='msg '+role;el.textContent=text;
+  const msgs=document.getElementById('mati-msgs');
+  msgs.appendChild(el);msgs.scrollTop=9999;
+}
+
+async function sendMati(){
+  const inp=document.getElementById('mati-input');
+  const q=inp.value.trim();if(!q) return;
+  inp.value='';addMatiMsg(q,'user');
+  addMatiMsg('⏳ ...','ai');
+  try{
+    const res=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:300,system:MATI_SYS,messages:[{role:'user',content:q}]})
+    });
+    const data=await res.json();
+    document.getElementById('mati-msgs').lastChild.remove();
+    const reply=data.content?.[0]?.text||"Désolée, pouvez-vous reformuler ?";
+    addMatiMsg(reply,'ai');speakMati(reply);
+  }catch{
+    document.getElementById('mati-msgs').lastChild.remove();
+    const r=getFallback(q);addMatiMsg(r,'ai');speakMati(r);
+  }
+}
+
+function getFallback(q){
+  q=q.toLowerCase();
+  if(q.includes('tchep')||q.includes('thiéboud')) return '🍚 Notre Tchep est notre spécialité ! À partir de 3000F. Le Tchep au mouton est le favori à 4000F !';
+  if(q.includes('prix')||q.includes('combien')) return '💰 Nos prix vont de 500F (boissons) à 5000F (Soupe du pêcheur). Quel plat vous intéresse ?';
+  if(q.includes('commander')) return '📱 Commandez directement sur l\'app ou via WhatsApp au +225 0787483004 !';
+  if(q.includes('soir')||q.includes('spécial')) return '🌙 Ce soir : Poulet et Poisson braisés/four à partir de 4000F !';
+  return '👑 Je suis Mati ! Posez-moi une question sur notre menu ou passez votre commande via WhatsApp !';
+}
+
+renderCatBar();
+renderMenu();
+updateCartUI();
+</script>
+</body>
+</html>
