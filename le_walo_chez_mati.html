@@ -1,0 +1,899 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Le Walo – Chez Mati</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--gold:#C8960C;--gl:#F5D77A;--dg:#1A3A2A;--mg:#2D5A3D;--red:#8B1A1A;--cream:#FDF6E3;--cd:#F0E4C0;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Poppins',sans-serif;background:var(--cream);color:#1A1A1A;min-height:100vh;overflow-x:hidden;}
+
+/* SPLASH */
+#splash{position:fixed;inset:0;background:var(--dg);z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity 1s;}
+#splash.hide{opacity:0;pointer-events:none;}
+.sw span{width:12px;height:12px;background:var(--gold);border-radius:50%;animation:wv 1.2s infinite ease-in-out;display:inline-block;margin:0 5px;}
+.sw span:nth-child(2){animation-delay:.2s;}.sw span:nth-child(3){animation-delay:.4s;}
+@keyframes wv{0%,100%{transform:translateY(0);}50%{transform:translateY(-16px);}}
+
+/* NAV */
+nav{background:var(--dg);padding:12px 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 2px 12px rgba(0,0,0,.3);flex-wrap:wrap;gap:8px;}
+.nl{font-family:'Playfair Display',serif;color:var(--gold);font-size:22px;line-height:1.1;}
+.nl small{color:var(--cd);font-size:11px;display:block;font-family:'Poppins',sans-serif;font-weight:300;}
+.ntabs{display:flex;gap:4px;flex-wrap:wrap;}
+.nt{background:none;border:none;color:var(--cd);padding:7px 12px;border-radius:8px;cursor:pointer;font-size:12px;font-family:'Poppins',sans-serif;transition:all .2s;}
+.nt.active,.nt:hover{background:var(--gold);color:var(--dg);font-weight:600;}
+.cbtn{background:var(--red);color:white;border:none;border-radius:8px;padding:7px 14px;cursor:pointer;font-size:12px;font-weight:600;position:relative;}
+.cb{position:absolute;top:-6px;right:-6px;background:var(--gold);color:var(--dg);border-radius:50%;width:18px;height:18px;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;}
+
+/* PAGES */
+.page{display:none;padding:20px;max-width:960px;margin:0 auto;}
+.page.active{display:block;}
+
+/* HERO */
+.hero{background:linear-gradient(135deg,var(--dg),var(--mg));border-radius:16px;padding:28px;text-align:center;margin-bottom:24px;}
+.hero h1{font-family:'Playfair Display',serif;color:var(--gold);font-size:36px;line-height:1.1;}
+.hero .tl{color:var(--gl);font-style:italic;font-size:15px;margin-top:4px;}
+.hero p{color:var(--cd);font-size:13px;margin-top:4px;}
+.cta{display:inline-flex;align-items:center;gap:8px;background:var(--gold);color:var(--dg);padding:12px 24px;border-radius:10px;font-weight:700;font-size:14px;margin-top:14px;border:none;cursor:pointer;font-family:'Poppins',sans-serif;}
+
+/* CATBAR */
+.catbar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px;}
+.catbtn{background:white;border:2px solid var(--gold);color:#4A3A2A;padding:6px 14px;border-radius:20px;cursor:pointer;font-size:12px;font-family:'Poppins',sans-serif;transition:all .2s;}
+.catbtn.active,.catbtn:hover{background:var(--gold);color:var(--dg);font-weight:600;}
+
+.stitle{font-family:'Playfair Display',serif;color:var(--dg);font-size:20px;border-left:4px solid var(--gold);padding-left:10px;margin-bottom:14px;}
+
+/* PRODUCT GRID */
+.pgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px;margin-bottom:24px;}
+.pcard{background:white;border-radius:12px;overflow:hidden;box-shadow:0 2px 10px rgba(0,0,0,.08);transition:transform .2s;position:relative;}
+.pcard:hover{transform:translateY(-3px);}
+.pimg{width:100%;height:140px;object-fit:cover;display:block;}
+.pfb{width:100%;height:140px;background:var(--cd);display:flex;align-items:center;justify-content:center;font-size:48px;}
+.pbody{padding:12px;}
+.pname{font-weight:600;font-size:13px;margin-bottom:3px;line-height:1.3;}
+.pprice{color:var(--gold);font-weight:700;font-size:15px;}
+.pcat{font-size:10px;color:#4A3A2A;background:var(--cd);padding:2px 7px;border-radius:10px;display:inline-block;margin-bottom:5px;}
+.addbtn{width:100%;background:var(--dg);color:var(--gold);border:none;padding:8px;border-radius:7px;cursor:pointer;font-weight:600;font-size:12px;font-family:'Poppins',sans-serif;margin-top:6px;}
+.addbtn:hover{background:var(--mg);}
+.sbadge{position:absolute;top:8px;right:8px;color:white;font-size:10px;font-weight:700;padding:2px 7px;border-radius:8px;}
+.sok{background:#2D7A4D;}.swarn{background:#B8860B;}.slow{background:#8B1A1A;animation:blk 0.6s infinite;}
+@keyframes blk{0%,100%{opacity:1;}50%{opacity:.2;}}
+
+/* CART */
+#cpanel{position:fixed;top:0;right:-420px;width:400px;height:100vh;background:white;z-index:300;box-shadow:-4px 0 24px rgba(0,0,0,.2);transition:right .3s;display:flex;flex-direction:column;}
+#cpanel.open{right:0;}
+.chdr{background:var(--dg);padding:16px;display:flex;align-items:center;justify-content:space-between;}
+.chdr h2{color:var(--gold);font-family:'Playfair Display',serif;font-size:20px;}
+.citems{flex:1;overflow-y:auto;padding:14px;}
+.citem{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid #eee;}
+.cimg{width:44px;height:44px;border-radius:8px;object-fit:cover;}
+.cinfo{flex:1;}.cname{font-weight:600;font-size:12px;}.cprice{color:var(--gold);font-weight:700;font-size:12px;}
+.cqty{display:flex;align-items:center;gap:6px;}
+.cqty button{background:var(--cd);border:none;border-radius:5px;width:24px;height:24px;cursor:pointer;font-weight:700;}
+.cfooter{padding:14px;border-top:2px solid var(--cd);}
+.ctotal{display:flex;justify-content:space-between;font-size:16px;font-weight:700;margin-bottom:10px;}
+.ctotal span{color:var(--gold);}
+.wabtn{display:flex;align-items:center;justify-content:center;gap:8px;background:#25D366;color:white;border:none;width:100%;padding:13px;border-radius:10px;font-size:14px;font-weight:700;font-family:'Poppins',sans-serif;cursor:pointer;}
+
+/* MATI */
+#mbubble{position:fixed;bottom:24px;right:24px;z-index:500;display:flex;flex-direction:column;align-items:flex-end;gap:10px;}
+#mbtn{width:62px;height:62px;border-radius:50%;background:var(--gold);border:3px solid var(--dg);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:26px;box-shadow:0 4px 20px rgba(0,0,0,.25);animation:pls 3s infinite;}
+@keyframes pls{0%,100%{transform:scale(1);}50%{transform:scale(1.08);}}
+#mpanel{background:var(--dg);border-radius:12px;width:310px;max-height:400px;display:none;flex-direction:column;box-shadow:0 4px 20px rgba(0,0,0,.25);overflow:hidden;}
+#mpanel.open{display:flex;}
+#mhdr{background:var(--gold);padding:10px 14px;display:flex;align-items:center;justify-content:space-between;}
+#mhdr span{font-weight:600;color:var(--dg);font-size:14px;}
+#mmsgs{flex:1;overflow-y:auto;padding:10px;display:flex;flex-direction:column;gap:7px;}
+.mmsg{max-width:85%;padding:7px 10px;border-radius:9px;font-size:12px;line-height:1.5;}
+.mmsg.ai{background:#2D5A3D;color:#F5D77A;align-self:flex-start;}
+.mmsg.user{background:var(--gold);color:var(--dg);align-self:flex-end;}
+#minrow{display:flex;padding:8px;gap:7px;border-top:1px solid #2D5A3D;}
+#minput{flex:1;background:#1A3A2A;border:1px solid #3D6A4D;border-radius:7px;color:#F5D77A;padding:7px 9px;font-size:12px;outline:none;}
+#msend{background:var(--gold);border:none;border-radius:7px;padding:0 12px;cursor:pointer;color:var(--dg);font-weight:700;font-size:16px;}
+
+/* CAISSE */
+.cgrid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:20px;}
+.scard{background:white;border-radius:12px;padding:18px;box-shadow:0 2px 8px rgba(0,0,0,.07);text-align:center;}
+.snum{font-family:'Playfair Display',serif;font-size:28px;color:var(--dg);}
+.slbl{font-size:12px;color:#666;margin-top:3px;}
+.sform{background:white;border-radius:12px;padding:18px;box-shadow:0 2px 8px rgba(0,0,0,.07);margin-bottom:18px;}
+.sform h3{font-family:'Playfair Display',serif;color:var(--dg);margin-bottom:12px;}
+.frow{display:flex;gap:8px;margin-bottom:8px;flex-wrap:wrap;}
+.frow select,.frow input{flex:1;padding:9px 11px;border:1.5px solid #ddd;border-radius:7px;font-family:'Poppins',sans-serif;font-size:12px;min-width:110px;}
+.bgold{background:var(--gold);color:var(--dg);border:none;padding:9px 18px;border-radius:7px;font-weight:700;font-size:13px;cursor:pointer;font-family:'Poppins',sans-serif;}
+.bred{background:var(--red);color:white;border:none;padding:9px 18px;border-radius:7px;font-weight:700;font-size:13px;cursor:pointer;font-family:'Poppins',sans-serif;}
+table.st{width:100%;border-collapse:collapse;font-size:12px;}
+table.st th{background:var(--dg);color:var(--gold);padding:9px 11px;text-align:left;}
+table.st td{padding:9px 11px;border-bottom:1px solid #eee;}
+table.st tr:nth-child(even) td{background:#f9f5ec;}
+
+/* STOCK */
+.skgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:12px;}
+.skitem{background:white;border-radius:12px;padding:14px;box-shadow:0 2px 8px rgba(0,0,0,.07);}
+.skname{font-weight:600;font-size:12px;margin-bottom:6px;}
+.skqty{display:flex;align-items:center;gap:6px;margin-bottom:6px;}
+.skqty input{width:55px;padding:4px 7px;border:1.5px solid #ddd;border-radius:5px;font-size:13px;text-align:center;}
+.skbar{height:5px;border-radius:3px;background:#eee;margin-top:6px;}
+.skfill{height:100%;border-radius:3px;transition:width .3s;}
+
+/* ADMIN MODAL */
+#adm-overlay{position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:800;display:none;align-items:center;justify-content:center;}
+#adm-overlay.show{display:flex;}
+#adm-modal{background:white;border-radius:16px;width:92%;max-width:580px;max-height:90vh;overflow-y:auto;box-shadow:0 8px 40px rgba(0,0,0,.3);}
+.amhdr{background:var(--dg);padding:16px 20px;border-radius:16px 16px 0 0;display:flex;justify-content:space-between;align-items:center;}
+.amhdr h2{color:var(--gold);font-family:'Playfair Display',serif;font-size:20px;}
+.ambody{padding:20px;}
+.inp{width:100%;padding:10px 13px;border:1.5px solid #ddd;border-radius:8px;font-family:'Poppins',sans-serif;font-size:13px;margin-bottom:10px;}
+.inp:focus{outline:none;border-color:var(--gold);}
+.prod-row{display:flex;align-items:center;gap:8px;padding:10px;border:1px solid #eee;border-radius:8px;margin-bottom:8px;}
+.prod-row img{width:40px;height:40px;border-radius:6px;object-fit:cover;flex-shrink:0;}
+.prod-row .pi{flex:1;min-width:0;}
+.prod-row .pi b{display:block;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.prod-row .pi span{font-size:10px;color:#888;}
+.delbtn{background:#fee;border:1px solid #fcc;color:var(--red);border-radius:6px;padding:5px 8px;cursor:pointer;font-size:11px;font-weight:600;flex-shrink:0;}
+
+/* LOGIN */
+#login-overlay{position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:900;display:none;align-items:center;justify-content:center;}
+#login-overlay.show{display:flex;}
+#login-box{background:white;border-radius:14px;padding:30px;width:300px;text-align:center;box-shadow:0 8px 40px rgba(0,0,0,.3);}
+#login-box h2{font-family:'Playfair Display',serif;color:var(--dg);margin-bottom:6px;}
+#login-box p{font-size:12px;color:#888;margin-bottom:18px;}
+
+/* NOTIFS */
+#nc{position:fixed;top:16px;left:50%;transform:translateX(-50%);z-index:1000;display:flex;flex-direction:column;gap:8px;pointer-events:none;width:92%;max-width:400px;}
+.notif{color:white;padding:12px 20px;border-radius:9px;font-weight:600;font-size:13px;box-shadow:0 4px 16px rgba(0,0,0,.2);animation:si .3s ease;text-align:center;}
+@keyframes si{from{transform:translateY(-16px);opacity:0;}to{transform:translateY(0);opacity:1;}}
+
+/* ALARM FLASH */
+body.alarm-flash{animation:flash 0.4s 3;}
+@keyframes flash{0%,100%{background:var(--cream);}50%{background:#ffdddd;}}
+
+#ov{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:299;display:none;}
+#ov.show{display:block;}
+.rhdr{background:var(--dg);color:var(--cd);border-radius:12px;padding:18px;margin-bottom:18px;display:flex;justify-content:space-between;align-items:center;}
+.rhdr h2{font-family:'Playfair Display',serif;color:var(--gold);}
+
+/* VOICE INDICATOR */
+#voice-indicator{position:fixed;bottom:100px;right:24px;background:var(--dg);color:var(--gl);border-radius:20px;padding:6px 14px;font-size:11px;font-weight:600;z-index:499;display:none;align-items:center;gap:6px;}
+#voice-indicator.show{display:flex;}
+.vdot{width:8px;height:8px;background:#4CAF50;border-radius:50%;animation:vp 1s infinite;}
+@keyframes vp{0%,100%{transform:scale(1);}50%{transform:scale(1.5);}}
+</style>
+</head>
+<body>
+
+<!-- SPLASH -->
+<div id="splash">
+  <div style="font-family:'Playfair Display',serif;color:var(--gold);font-size:48px;text-align:center;line-height:1.2;">Le Walo<br><span style="font-size:24px;color:#F5D77A;">Chez Mati</span></div>
+  <div style="color:var(--gl);font-size:14px;margin-top:10px;letter-spacing:2px;">✨ La Reine du Tchep ✨</div>
+  <div class="sw" style="margin-top:28px;"><span></span><span></span><span></span></div>
+  <div style="color:var(--cd);font-size:12px;margin-top:20px;opacity:.7;">Touchez l'écran pour activer le son</div>
+</div>
+
+<!-- VOICE INDICATOR -->
+<div id="voice-indicator"><div class="vdot"></div> Mati parle...</div>
+
+<!-- NOTIFS -->
+<div id="nc"></div>
+<div id="ov" onclick="closeCart()"></div>
+
+<!-- NAV -->
+<nav>
+  <div class="nl">Le Walo <small>Chez Mati</small></div>
+  <div class="ntabs">
+    <button class="nt active" onclick="showPage('menu',this)">🍽 Menu</button>
+    <button class="nt" onclick="showPage('caisse',this)">💰 Caisse</button>
+    <button class="nt" onclick="showPage('stock',this)">📦 Stock</button>
+    <button class="nt" onclick="showPage('rapport',this)">📊 Rapport</button>
+    <button class="nt" onclick="requireAdmin()" style="background:rgba(200,150,12,.15);color:var(--gl);">🔐 Admin</button>
+  </div>
+  <button class="cbtn" onclick="toggleCart()">🛒 <span class="cb" id="cc">0</span></button>
+</nav>
+
+<!-- CART -->
+<div id="cpanel">
+  <div class="chdr">
+    <h2>🛒 Panier</h2>
+    <button style="background:none;border:none;color:white;font-size:20px;cursor:pointer;" onclick="closeCart()">✕</button>
+  </div>
+  <div class="citems" id="clist"></div>
+  <div class="cfooter">
+    <div class="ctotal">Total : <span id="ctotal">0 F</span></div>
+    <button class="wabtn" onclick="orderWA()">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+      Commander via WhatsApp
+    </button>
+  </div>
+</div>
+
+<!-- MATI AI -->
+<div id="mbubble">
+  <div id="mpanel">
+    <div id="mhdr">
+      <span>👑 Mati – Je vous écoute</span>
+      <button style="background:none;border:none;cursor:pointer;font-size:18px;color:var(--dg);" onclick="toggleMati()">✕</button>
+    </div>
+    <div id="mmsgs"></div>
+    <div id="minrow">
+      <input id="minput" placeholder="Posez une question..." onkeydown="if(event.key==='Enter')sendMati()"/>
+      <button id="msend" onclick="sendMati()">➤</button>
+    </div>
+  </div>
+  <button id="mbtn" onclick="toggleMati()">👑</button>
+</div>
+
+<!-- LOGIN -->
+<div id="login-overlay">
+  <div id="login-box">
+    <h2>🔐 Mode Admin</h2>
+    <p>Entrez le mot de passe administrateur</p>
+    <input class="inp" type="password" id="pwd-input" placeholder="Mot de passe..." onkeydown="if(event.key==='Enter')checkPwd()"/>
+    <button class="bgold" style="width:100%;padding:11px;" onclick="checkPwd()">Connexion</button>
+    <button onclick="closeLogin()" style="background:none;border:none;color:#888;font-size:12px;margin-top:10px;cursor:pointer;">Annuler</button>
+  </div>
+</div>
+
+<!-- ADMIN MODAL -->
+<div id="adm-overlay">
+  <div id="adm-modal">
+    <div class="amhdr">
+      <h2>🔐 Panneau Administrateur</h2>
+      <button style="background:none;border:none;color:white;font-size:20px;cursor:pointer;" onclick="closeAdmin()">✕</button>
+    </div>
+    <div class="ambody">
+      <h3 style="font-family:'Playfair Display',serif;color:var(--dg);margin-bottom:14px;">➕ Ajouter un produit</h3>
+      <input class="inp" id="a-name" placeholder="Nom du produit *"/>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+        <select class="inp" id="a-cat" style="margin-bottom:0;"></select>
+        <input class="inp" id="a-newcat" placeholder="Ou créer une catégorie..." style="margin-bottom:0;"/>
+      </div>
+      <div style="margin-top:8px;display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+        <input class="inp" id="a-price" type="number" placeholder="Prix en F (0 = sur demande)" style="margin-bottom:0;"/>
+        <input class="inp" id="a-stock" type="number" placeholder="Stock initial" value="20" style="margin-bottom:0;"/>
+      </div>
+      <input class="inp" id="a-img" placeholder="URL image (optionnel)" style="margin-top:8px;"/>
+      <input class="inp" id="a-emoji" placeholder="Emoji (ex: 🍗)" value="🍽"/>
+      <button class="bgold" style="width:100%;padding:11px;margin-bottom:20px;" onclick="addProduct()">✅ Ajouter au menu</button>
+      <h3 style="font-family:'Playfair Display',serif;color:var(--dg);margin-bottom:12px;">📋 Gérer les produits existants</h3>
+      <input class="inp" id="a-search" placeholder="🔍 Rechercher..." oninput="renderAdminList()"/>
+      <div id="adm-list"></div>
+    </div>
+  </div>
+</div>
+
+<!-- PAGES -->
+<div id="page-menu" class="page active">
+  <div class="hero">
+    <div style="font-size:56px;margin-bottom:6px;">👑</div>
+    <h1>Le Walo<br><span style="font-size:22px;color:#F5D77A;">Chez Mati</span></h1>
+    <div class="tl">La Reine du Tchep</div>
+    <p>Le goût dans vos assiettes</p>
+    <button class="cta" onclick="document.getElementById('catbar').scrollIntoView({behavior:'smooth'})">🍽 Voir le Menu</button>
+  </div>
+  <div class="catbar" id="catbar"></div>
+  <div id="menu-container"></div>
+</div>
+
+<div id="page-caisse" class="page">
+  <h2 class="stitle">💰 Caisse du Jour</h2>
+  <div class="cgrid">
+    <div class="scard"><div class="snum" id="sv">0</div><div class="slbl">Articles vendus</div></div>
+    <div class="scard"><div class="snum" id="sca" style="font-size:20px;">0 F</div><div class="slbl">Chiffre d'affaires</div></div>
+    <div class="scard"><div class="snum" id="sk">0</div><div class="slbl">Commandes</div></div>
+    <div class="scard"><div class="snum" id="sm" style="font-size:20px;">0 F</div><div class="slbl">Panier moyen</div></div>
+  </div>
+  <div class="sform">
+    <h3>➕ Enregistrer une vente</h3>
+    <div class="frow">
+      <select id="sp"></select>
+      <input type="number" id="sq" value="1" min="1" style="max-width:80px;"/>
+      <input type="text" id="sc" placeholder="Client (optionnel)"/>
+    </div>
+    <div class="frow">
+      <select id="spm"><option>Espèces</option><option>Mobile Money</option><option>WhatsApp</option></select>
+      <button class="bgold" onclick="recordSale()">✔ Valider</button>
+      <button class="bred" onclick="clearSales()">🗑 Effacer</button>
+    </div>
+  </div>
+  <h3 style="font-family:'Playfair Display',serif;color:var(--dg);margin-bottom:10px;">📋 Transactions du jour</h3>
+  <div style="overflow-x:auto;"><table class="st"><thead><tr><th>Heure</th><th>Produit</th><th>Qté</th><th>Montant</th><th>Client</th><th>Paiement</th></tr></thead><tbody id="stb"></tbody></table></div>
+</div>
+
+<div id="page-stock" class="page">
+  <h2 class="stitle">📦 Gestion des Stocks</h2>
+  <p style="color:#666;margin-bottom:16px;font-size:13px;">⚠️ Alarme sonore et visuelle automatique à 3 unités ou moins.</p>
+  <div class="skgrid" id="skgrid"></div>
+</div>
+
+<div id="page-rapport" class="page">
+  <div class="rhdr">
+    <div><h2>📊 Rapport de Fin de Journée</h2><p style="font-size:12px;margin-top:3px;" id="rdate"></p></div>
+    <button class="bgold" onclick="window.print()">🖨 Imprimer</button>
+  </div>
+  <div id="rcontent"></div>
+</div>
+
+<script>
+// ===================== DATA =====================
+const DEFAULT_MENU = [
+  {id:1,  name:"Petit déjeuner – Omelette au plat", cat:"Entrées",             price:0,    stock:20, emoji:"🍳", img:"https://images.unsplash.com/photo-1510693206972-df098062cb71?w=400&q=80"},
+  {id:2,  name:"Avocat au thon",                   cat:"Entrées",             price:0,    stock:15, emoji:"🥑", img:"https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=400&q=80"},
+  {id:3,  name:"Avocat aux œufs durs",             cat:"Entrées",             price:0,    stock:15, emoji:"🥚", img:"https://images.unsplash.com/photo-1525351484163-7529414344d8?w=400&q=80"},
+  {id:4,  name:"Macédoine de légumes",             cat:"Entrées",             price:0,    stock:18, emoji:"🥗", img:"https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?w=400&q=80"},
+  {id:5,  name:"Café",                             cat:"Entrées",             price:500,  stock:50, emoji:"☕", img:"https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=400&q=80"},
+  {id:6,  name:"Thé",                              cat:"Entrées",             price:500,  stock:50, emoji:"🍵", img:"https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&q=80"},
+  {id:7,  name:"Nescafé",                          cat:"Entrées",             price:500,  stock:50, emoji:"☕", img:"https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=400&q=80"},
+  {id:10, name:"Tchep blanc au poisson",           cat:"Thiéboudiène",        price:3000, stock:12, emoji:"🐟", img:"https://images.unsplash.com/photo-1574484284002-952d92456975?w=400&q=80"},
+  {id:11, name:"Tchep blanc au poulet",            cat:"Thiéboudiène",        price:3000, stock:12, emoji:"🍗", img:"https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=400&q=80"},
+  {id:12, name:"Tchep blanc à la viande de bœuf", cat:"Thiéboudiène",        price:3000, stock:10, emoji:"🥩", img:"https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=400&q=80"},
+  {id:13, name:"Tchep au mouton",                  cat:"Thiéboudiène",        price:4000, stock:8,  emoji:"🐑", img:"https://images.unsplash.com/photo-1547592180-85f173990554?w=400&q=80"},
+  {id:14, name:"Tchep aux boulettes de poisson",  cat:"Thiéboudiène",        price:3000, stock:10, emoji:"🎣", img:"https://images.unsplash.com/photo-1519984388953-d2406bc725e1?w=400&q=80"},
+  {id:20, name:"Sauce claire",                     cat:"Riz & Sauces",        price:2000, stock:15, emoji:"🍲", img:"https://images.unsplash.com/photo-1455619452474-d2be8b1e70cd?w=400&q=80"},
+  {id:21, name:"Sauce arachide poulet/poisson",   cat:"Riz & Sauces",        price:3000, stock:12, emoji:"🥜", img:"https://images.unsplash.com/photo-1604329760661-e71dc83f8f26?w=400&q=80"},
+  {id:22, name:"Sauce feuille",                    cat:"Riz & Sauces",        price:2000, stock:10, emoji:"🌿", img:"https://images.unsplash.com/photo-1476224203421-9ac39bcb3327?w=400&q=80"},
+  {id:23, name:"Sauce graine",                     cat:"Riz & Sauces",        price:2000, stock:10, emoji:"🌾", img:"https://images.unsplash.com/photo-1547592166-23ac45744acd?w=400&q=80"},
+  {id:24, name:"Sauce djoumblé",                  cat:"Riz & Sauces",        price:2000, stock:8,  emoji:"🍛", img:"https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=400&q=80"},
+  {id:25, name:"Sauce yassa au poulet",            cat:"Riz & Sauces",        price:3000, stock:10, emoji:"🍋", img:"https://images.unsplash.com/photo-1598103442097-8b74394b95c8?w=400&q=80"},
+  {id:26, name:"Sauce yassa au mouton",            cat:"Riz & Sauces",        price:4000, stock:8,  emoji:"🐏", img:"https://images.unsplash.com/photo-1574484284002-952d92456975?w=400&q=80"},
+  {id:27, name:"Kedjenou de poulet",               cat:"Riz & Sauces",        price:3000, stock:8,  emoji:"🫕", img:"https://images.unsplash.com/photo-1512058564366-18510be2db19?w=400&q=80"},
+  {id:28, name:"Gouagouassou",                     cat:"Riz & Sauces",        price:3000, stock:6,  emoji:"🍱", img:"https://images.unsplash.com/photo-1504544750208-dc0358e63f7f?w=400&q=80"},
+  {id:29, name:"Soupe du pêcheur",                cat:"Riz & Sauces",        price:5000, stock:5,  emoji:"🎏", img:"https://images.unsplash.com/photo-1559847844-5315695dadae?w=400&q=80"},
+  {id:30, name:"Poulet braisé",                    cat:"Spécialités du Soir", price:4000, stock:8,  emoji:"🔥", img:"https://images.unsplash.com/photo-1532550907401-a500c9a57435?w=400&q=80"},
+  {id:31, name:"Poisson braisé",                   cat:"Spécialités du Soir", price:4000, stock:8,  emoji:"🐠", img:"https://images.unsplash.com/photo-1519984388953-d2406bc725e1?w=400&q=80"},
+  {id:32, name:"Poisson au four",                  cat:"Spécialités du Soir", price:4500, stock:6,  emoji:"🫙", img:"https://images.unsplash.com/photo-1467003909585-2f8a72700288?w=400&q=80"},
+  {id:33, name:"Poulet au four",                   cat:"Spécialités du Soir", price:4500, stock:6,  emoji:"🍖", img:"https://images.unsplash.com/photo-1598103442097-8b74394b95c8?w=400&q=80"},
+  {id:40, name:"Thé à la menthe",                  cat:"Boissons Chaudes",    price:1000, stock:40, emoji:"🍃", img:"https://images.unsplash.com/photo-1556679343-c7306c1976bc?w=400&q=80"},
+  {id:50, name:"Cocktail Mati du Paradis",         cat:"Boissons Fraîches",   price:1000, stock:25, emoji:"🥤", img:"https://images.unsplash.com/photo-1497534446932-c925b458314e?w=400&q=80"},
+  {id:51, name:"Cocktail des Caviars",             cat:"Boissons Fraîches",   price:3000, stock:20, emoji:"🍹", img:"https://images.unsplash.com/photo-1536935338788-846bb9981813?w=400&q=80"},
+  {id:52, name:"Bissap (1,5L)",                    cat:"Jus Naturels",        price:3000, stock:15, emoji:"🌺", img:"https://images.unsplash.com/photo-1596803244535-925769f389fc?w=400&q=80"},
+  {id:53, name:"Gingembre",                        cat:"Jus Naturels",        price:3000, stock:15, emoji:"🫚", img:"https://images.unsplash.com/photo-1571091718767-18b5b1457add?w=400&q=80"},
+  {id:54, name:"Tamarin",                          cat:"Jus Naturels",        price:3000, stock:15, emoji:"🌿", img:"https://images.unsplash.com/photo-1565958011703-44f9829ba187?w=400&q=80"},
+];
+
+// ===================== STATE =====================
+let MENU    = JSON.parse(localStorage.getItem('walo_menu')  || JSON.stringify(DEFAULT_MENU));
+let stock   = JSON.parse(localStorage.getItem('walo_stock') || '{}');
+let sales   = JSON.parse(localStorage.getItem('walo_sales') || '[]');
+let cart    = [];
+let matiOpen = false;
+let alarmTimers = {};
+const ADMIN_PWD = 'mati12345';
+let audioCtx = null;
+let speechReady = false;
+
+// Init stock
+MENU.forEach(p => { if (!(p.id in stock)) stock[p.id] = p.stock || 20; });
+saveAll();
+
+function saveAll() {
+  localStorage.setItem('walo_menu',  JSON.stringify(MENU));
+  localStorage.setItem('walo_stock', JSON.stringify(stock));
+  localStorage.setItem('walo_sales', JSON.stringify(sales));
+}
+
+// ===================== AUDIO CONTEXT (unlock on first tap) =====================
+function unlockAudio() {
+  if (audioCtx) return;
+  audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  // play silent buffer to unlock
+  const buf = audioCtx.createBuffer(1,1,22050);
+  const src = audioCtx.createBufferSource();
+  src.buffer = buf; src.connect(audioCtx.destination); src.start(0);
+  speechReady = true;
+}
+document.addEventListener('click', unlockAudio, {once:false});
+document.addEventListener('touchstart', unlockAudio, {once:false});
+
+// ===================== SOUND — beep d'alarme =====================
+function playAlarmBeep(times) {
+  if (!audioCtx) { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); }
+  let delay = 0;
+  for (let i = 0; i < times; i++) {
+    (function(d){
+      setTimeout(()=>{
+        try {
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+          osc.connect(gain); gain.connect(audioCtx.destination);
+          osc.type = 'square';
+          osc.frequency.setValueAtTime(880, audioCtx.currentTime);
+          gain.gain.setValueAtTime(0.4, audioCtx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.4);
+          osc.start(audioCtx.currentTime);
+          osc.stop(audioCtx.currentTime + 0.4);
+        } catch(e){}
+      }, d);
+    })(delay);
+    delay += 600;
+  }
+}
+
+// ===================== MATI VOICE =====================
+let isSpeaking = false;
+const speechQueue = [];
+
+function speakMati(text) {
+  speechQueue.push(text);
+  if (!isSpeaking) processQueue();
+}
+
+function processQueue() {
+  if (!speechQueue.length) { isSpeaking = false; document.getElementById('voice-indicator').classList.remove('show'); return; }
+  isSpeaking = true;
+  document.getElementById('voice-indicator').classList.add('show');
+  const text = speechQueue.shift();
+
+  // Try Web Speech API
+  if (window.speechSynthesis) {
+    window.speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = 'fr-FR'; u.rate = 0.92; u.pitch = 1.1; u.volume = 1;
+    // Pick a French voice if available
+    const voices = window.speechSynthesis.getVoices();
+    const frVoice = voices.find(v => v.lang.startsWith('fr'));
+    if (frVoice) u.voice = frVoice;
+    u.onend = () => { setTimeout(processQueue, 300); };
+    u.onerror = () => { setTimeout(processQueue, 300); };
+    window.speechSynthesis.speak(u);
+  } else {
+    setTimeout(processQueue, 1500);
+  }
+}
+
+// Load voices early
+if (window.speechSynthesis) {
+  window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices();
+  window.speechSynthesis.getVoices();
+}
+
+// ===================== SPLASH =====================
+setTimeout(() => {
+  document.getElementById('splash').classList.add('hide');
+  setTimeout(() => {
+    document.getElementById('splash').style.display = 'none';
+    // Welcome message + voice
+    const welcome = "Bienvenue chez Le Walo, Chez Mati ! Je suis Mati, votre assistante personnelle. Je connais tout notre menu. Comment puis-je vous aider aujourd'hui ?";
+    addMatiMsg("👑 " + welcome, 'ai');
+    speakMati(welcome);
+    // Open Mati panel
+    setTimeout(() => {
+      document.getElementById('mpanel').classList.add('open');
+      matiOpen = true;
+    }, 500);
+    checkAllStocks();
+  }, 900);
+}, 2800);
+
+// ===================== PAGES =====================
+function showPage(p, btn) {
+  document.querySelectorAll('.page').forEach(x => x.classList.remove('active'));
+  document.querySelectorAll('.nt').forEach(x => x.classList.remove('active'));
+  document.getElementById('page-' + p).classList.add('active');
+  if (btn) btn.classList.add('active');
+  if (p === 'caisse') renderCaisse();
+  if (p === 'stock')  renderStock();
+  if (p === 'rapport') renderRapport();
+}
+
+// ===================== MATI MEMORY =====================
+function getMatiSystem() {
+  const cats = [...new Set(MENU.map(p => p.cat))];
+  let menuText = '';
+  cats.forEach(cat => {
+    const items = MENU.filter(p => p.cat === cat);
+    menuText += `\n${cat}:\n`;
+    items.forEach(p => {
+      const s = stock[p.id] || 0;
+      const dispo = s === 0 ? '❌ Rupture de stock' : s <= 3 ? `⚠️ Presque épuisé (${s} restant)` : `✅ Disponible`;
+      menuText += `  - ${p.name} : ${p.price === 0 ? 'Sur demande' : p.price.toLocaleString() + ' FCFA'} — ${dispo}\n`;
+    });
+  });
+  return `Tu es Mati, l'assistante vocale et virtuelle du restaurant "Le Walo – Chez Mati" à Abidjan, Côte d'Ivoire. Tu es chaleureuse, professionnelle, souriante. Tu parles toujours en français. Tu connais PARFAITEMENT le menu complet ci-dessous, avec les prix et la disponibilité en temps réel. Si un produit est en rupture, tu le précises. Réponds en 2-3 phrases maximum, de façon naturelle comme si tu parlais à voix haute.
+
+MENU COMPLET (temps réel):
+${menuText}
+COMMANDES WhatsApp: +225 0787483004 ou +225 0102052010
+SPÉCIALITÉ MAISON: La Thiéboudiène (Tchep) — "Le goût dans vos assiettes"`;
+}
+
+// ===================== MENU =====================
+function catEmoji(c) {
+  return {Entrées:'🥗',Thiéboudiène:'🍚','Riz & Sauces':'🍲','Spécialités du Soir':'🌙','Boissons Chaudes':'☕','Boissons Fraîches':'🥤','Jus Naturels':'🌿'}[c] || '🍽';
+}
+
+function renderCatBar() {
+  const cats = ["Tout", ...new Set(MENU.map(p => p.cat))];
+  document.getElementById('catbar').innerHTML = cats.map((c,i) =>
+    `<button class="catbtn${i===0?' active':''}" onclick="filterCat('${c}',this)">${catEmoji(c)} ${c}</button>`
+  ).join('');
+}
+
+function renderMenu(filter = 'Tout') {
+  const cats = filter === 'Tout' ? [...new Set(MENU.map(p => p.cat))] : [filter];
+  document.getElementById('menu-container').innerHTML = cats.map(cat => {
+    const prods = MENU.filter(p => p.cat === cat);
+    if (!prods.length) return '';
+    return `<h2 class="stitle">${catEmoji(cat)} ${cat}</h2><div class="pgrid">${prods.map(productCard).join('')}</div>`;
+  }).join('');
+}
+
+function productCard(p) {
+  const s = stock[p.id] || 0;
+  const bc = s <= 3 ? 'slow sbadge' : s <= 6 ? 'swarn sbadge' : 'sok sbadge';
+  const price = p.price === 0 ? 'Sur demande' : p.price.toLocaleString() + ' F';
+  return `<div class="pcard">
+    <span class="${bc}">${s <= 3 ? '⚠️ ' + s : s}</span>
+    <img class="pimg" src="${p.img||''}" alt="${p.name}" onerror="this.style.display='none';this.nextSibling.style.display='flex'"/>
+    <div class="pfb" style="display:none">${p.emoji||'🍽'}</div>
+    <div class="pbody">
+      <div class="pcat">${p.cat}</div>
+      <div class="pname">${p.name}</div>
+      <div class="pprice">${price}</div>
+      <button class="addbtn" onclick="addToCart(${p.id})" ${s===0?'disabled style="opacity:.4;cursor:not-allowed;"':''}>
+        ${s===0?'Rupture':'+ Ajouter'}
+      </button>
+    </div>
+  </div>`;
+}
+
+function filterCat(c, btn) {
+  document.querySelectorAll('.catbtn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderMenu(c);
+}
+
+// ===================== CART =====================
+function addToCart(id) {
+  const p = MENU.find(x => x.id === id);
+  const ex = cart.find(x => x.id === id);
+  if (ex) ex.qty++; else cart.push({...p, qty:1});
+  updateCartUI();
+  showNotif('✅ ' + p.name + ' ajouté !', '#2D7A4D');
+}
+
+function updateCartUI() {
+  const total = cart.reduce((s,x) => s + x.price * x.qty, 0);
+  document.getElementById('cc').textContent    = cart.reduce((s,x) => s + x.qty, 0);
+  document.getElementById('ctotal').textContent = total.toLocaleString() + ' F';
+  document.getElementById('clist').innerHTML = cart.length === 0
+    ? '<p style="text-align:center;color:#999;padding:20px;font-size:13px;">Panier vide</p>'
+    : cart.map(item => `<div class="citem">
+        <img class="cimg" src="${item.img||''}" onerror="this.style.display='none'" alt=""/>
+        <div class="cinfo"><div class="cname">${item.name}</div><div class="cprice">${(item.price*item.qty).toLocaleString()} F</div></div>
+        <div class="cqty">
+          <button onclick="cq(${item.id},-1)">−</button>
+          <span style="min-width:18px;text-align:center;font-weight:600;">${item.qty}</span>
+          <button onclick="cq(${item.id},1)">+</button>
+        </div>
+      </div>`).join('');
+}
+
+function cq(id, d) {
+  const i = cart.findIndex(x => x.id === id);
+  if (i === -1) return;
+  cart[i].qty += d;
+  if (cart[i].qty <= 0) cart.splice(i, 1);
+  updateCartUI();
+}
+
+function toggleCart() { document.getElementById('cpanel').classList.toggle('open'); document.getElementById('ov').classList.toggle('show'); }
+function closeCart()  { document.getElementById('cpanel').classList.remove('open'); document.getElementById('ov').classList.remove('show'); }
+
+function orderWA() {
+  if (!cart.length) { showNotif('⚠️ Panier vide !', '#8B1A1A'); speakMati("Votre panier est vide. Ajoutez des produits avant de commander."); return; }
+  const total = cart.reduce((s,x) => s + x.price * x.qty, 0);
+  let msg = '🌟 *Commande – Le Walo Chez Mati* 🌟\n\n';
+  cart.forEach(i => { msg += `• ${i.name} x${i.qty} = ${(i.price * i.qty).toLocaleString()} F\n`; });
+  msg += `\n💰 *Total : ${total.toLocaleString()} F*\n\nMerci ! 👑`;
+  window.open('https://wa.me/2250787483004?text=' + encodeURIComponent(msg), '_blank');
+  const announce = `Commande envoyée sur WhatsApp ! Total : ${total.toLocaleString()} francs CFA. Merci de votre confiance !`;
+  speakMati(announce);
+  addMatiMsg('✅ ' + announce, 'ai');
+  cart.forEach(item => recordSaleData(item.id, item.qty, 'WhatsApp', ''));
+  cart = []; updateCartUI(); closeCart();
+}
+
+// ===================== CAISSE =====================
+function todaySales() {
+  const t = new Date().toDateString();
+  return sales.filter(s => new Date(s.date).toDateString() === t);
+}
+
+function renderCaisse() {
+  const s = todaySales(), total = s.reduce((a,x) => a + x.total, 0);
+  document.getElementById('sv').textContent  = s.reduce((a,x) => a + x.qty, 0);
+  document.getElementById('sca').textContent = total.toLocaleString() + ' F';
+  document.getElementById('sk').textContent  = s.length;
+  document.getElementById('sm').textContent  = s.length ? Math.round(total / s.length).toLocaleString() + ' F' : '0 F';
+  document.getElementById('sp').innerHTML = MENU.map(p =>
+    `<option value="${p.id}">${p.emoji||''} ${p.name} – ${p.price.toLocaleString()} F</option>`
+  ).join('');
+  document.getElementById('stb').innerHTML = s.slice().reverse().map(x =>
+    `<tr><td>${x.time}</td><td>${x.product}</td><td>${x.qty}</td><td>${x.total.toLocaleString()} F</td><td>${x.client||'–'}</td><td>${x.payment}</td></tr>`
+  ).join('') || '<tr><td colspan="6" style="text-align:center;color:#999;padding:16px;">Aucune vente aujourd\'hui</td></tr>';
+}
+
+function recordSale() {
+  const id = parseInt(document.getElementById('sp').value);
+  const qty = parseInt(document.getElementById('sq').value) || 1;
+  const client = document.getElementById('sc').value;
+  const payment = document.getElementById('spm').value;
+  const p = MENU.find(x => x.id === id);
+  recordSaleData(id, qty, payment, client);
+  document.getElementById('sq').value = 1;
+  document.getElementById('sc').value = '';
+  renderCaisse();
+  const msg = `Vente enregistrée ! ${qty} ${p.name} pour ${(p.price * qty).toLocaleString()} francs.`;
+  showNotif('✅ ' + msg, '#2D7A4D');
+  speakMati(msg);
+}
+
+function recordSaleData(id, qty, payment, client) {
+  const p = MENU.find(x => x.id === id); if (!p) return;
+  sales.push({
+    date: new Date().toISOString(),
+    time: new Date().toLocaleTimeString('fr-FR', {hour:'2-digit', minute:'2-digit'}),
+    product: (p.emoji||'') + ' ' + p.name,
+    qty, total: p.price * qty, client, payment, productId: id
+  });
+  stock[id] = Math.max(0, (stock[id] || 0) - qty);
+  saveAll();
+  checkStock(id);
+}
+
+function clearSales() {
+  if (!confirm('Effacer toutes les ventes du jour ?')) return;
+  const t = new Date().toDateString();
+  sales = sales.filter(s => new Date(s.date).toDateString() !== t);
+  saveAll(); renderCaisse();
+  showNotif('🗑 Journée effacée', '#B8860B');
+  speakMati("Les ventes de la journée ont été effacées.");
+}
+
+// ===================== STOCK =====================
+function renderStock() {
+  document.getElementById('skgrid').innerHTML = MENU.map(p => {
+    const s = stock[p.id] || 0, max = p.stock || 20;
+    const pct = Math.min(100, Math.round(s / max * 100));
+    const col = s <= 3 ? '#C0392B' : s <= 6 ? '#E67E22' : '#27AE60';
+    return `<div class="skitem">
+      <div class="skname">${p.emoji||'🍽'} ${p.name}</div>
+      <div style="font-size:10px;color:#888;margin-bottom:6px;">${p.cat}</div>
+      <div class="skqty">
+        <input type="number" value="${s}" min="0" onchange="updateStock(${p.id},this.value)" style="border-color:${s<=3?'#C0392B':'#ddd'}"/>
+        <button style="background:var(--dg);color:var(--gold);border:none;border-radius:5px;padding:4px 9px;cursor:pointer;font-size:11px;font-weight:600;" onclick="addStock(${p.id})">+10</button>
+      </div>
+      <div class="skbar"><div class="skfill" style="width:${pct}%;background:${col};"></div></div>
+      ${s <= 3 ? '<p style="color:#C0392B;font-size:10px;margin-top:5px;font-weight:600;">⚠️ Stock critique !</p>' : ''}
+    </div>`;
+  }).join('');
+}
+
+function updateStock(id, val) {
+  stock[id] = Math.max(0, parseInt(val) || 0);
+  saveAll(); checkStock(id); renderStock();
+}
+function addStock(id) {
+  const p = MENU.find(x => x.id === id);
+  stock[id] = (stock[id] || 0) + 10;
+  saveAll(); renderStock();
+  showNotif('📦 Stock +10 pour ' + p.name, '#2D7A4D');
+  speakMati(`Stock rechargé de 10 unités pour ${p.name}.`);
+}
+
+// ===================== ALARME STOCK =====================
+function checkStock(id) {
+  if ((stock[id] || 0) <= 3) {
+    const p = MENU.find(x => x.id === id);
+    if (p) triggerAlarm(p);
+  }
+}
+
+function checkAllStocks() {
+  MENU.forEach(p => { if ((stock[p.id] || 0) <= 3) triggerAlarm(p); });
+}
+
+function triggerAlarm(p) {
+  if (alarmTimers[p.id]) return;
+  let n = 0;
+  // Flash écran
+  document.body.classList.add('alarm-flash');
+  setTimeout(() => document.body.classList.remove('alarm-flash'), 1500);
+
+  alarmTimers[p.id] = setInterval(() => {
+    n++;
+    // Beep sonore
+    playAlarmBeep(1);
+    // Notification visuelle
+    showNotif(`🚨 ALERTE STOCK (${n}/3) : ${p.emoji||''} ${p.name} — Reste ${stock[p.id]||0} unité(s) !`, '#8B1A1A');
+    // Mati annonce vocalement
+    speakMati(`Attention ! Alerte stock numéro ${n}. Il ne reste que ${stock[p.id]||0} unité de ${p.name}. Veuillez réapprovisionner rapidement.`);
+    // Afficher dans chat Mati
+    addMatiMsg(`🚨 Alerte ${n}/3 : Stock critique pour ${p.name} ! Reste : ${stock[p.id]||0} unité(s).`, 'ai');
+    if (n >= 3) {
+      clearInterval(alarmTimers[p.id]);
+      delete alarmTimers[p.id];
+    }
+  }, 4000);
+}
+
+// ===================== RAPPORT =====================
+function renderRapport() {
+  document.getElementById('rdate').textContent = new Date().toLocaleDateString('fr-FR', {weekday:'long', year:'numeric', month:'long', day:'numeric'});
+  const s = todaySales(), total = s.reduce((a,x) => a + x.total, 0);
+  const byP = {}; s.forEach(x => { byP[x.product] = (byP[x.product]||0) + x.qty; });
+  const top = Object.entries(byP).sort((a,b) => b[1]-a[1]).slice(0,5);
+  const alertes = MENU.filter(p => (stock[p.id]||0) <= 3);
+  document.getElementById('rcontent').innerHTML = `
+    <div class="cgrid">
+      <div class="scard"><div class="snum">${s.reduce((a,x)=>a+x.qty,0)}</div><div class="slbl">Articles vendus</div></div>
+      <div class="scard"><div class="snum" style="font-size:18px;">${total.toLocaleString()} F</div><div class="slbl">CA Total</div></div>
+      <div class="scard"><div class="snum">${s.length}</div><div class="slbl">Transactions</div></div>
+      <div class="scard"><div class="snum" style="font-size:18px;">${s.length?Math.round(total/s.length).toLocaleString():0} F</div><div class="slbl">Panier moyen</div></div>
+    </div>
+    <div style="background:white;border-radius:12px;padding:18px;box-shadow:0 2px 8px rgba(0,0,0,.07);margin-bottom:16px;">
+      <h3 style="font-family:'Playfair Display',serif;color:var(--dg);margin-bottom:12px;">🏆 Top Produits du jour</h3>
+      ${top.length ? top.map((x,i)=>`<div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid #eee;font-size:13px;"><span>${['🥇','🥈','🥉','4️⃣','5️⃣'][i]} ${x[0]}</span><span style="font-weight:700;color:var(--gold);">${x[1]} vendus</span></div>`).join('') : '<p style="color:#999;font-size:13px;">Aucune vente enregistrée</p>'}
+    </div>
+    <div style="background:white;border-radius:12px;padding:18px;box-shadow:0 2px 8px rgba(0,0,0,.07);">
+      <h3 style="font-family:'Playfair Display',serif;color:var(--dg);margin-bottom:12px;">⚠️ Produits en alerte stock</h3>
+      ${alertes.length ? alertes.map(p=>`<div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid #eee;font-size:13px;"><span>${p.emoji||''} ${p.name}</span><span style="color:var(--red);font-weight:700;">Reste: ${stock[p.id]||0}</span></div>`).join('') : '<p style="color:#2D7A4D;font-size:13px;">✅ Tous les stocks sont suffisants</p>'}
+    </div>`;
+  // Mati lit le rapport
+  const ventes = s.reduce((a,x)=>a+x.qty,0);
+  speakMati(`Rapport de fin de journée. Vous avez réalisé ${ventes} ventes pour un chiffre d'affaires de ${total.toLocaleString()} francs CFA. ${alertes.length ? `Attention, ${alertes.length} produit${alertes.length>1?'s sont':'est'} en alerte stock.` : 'Tous les stocks sont suffisants.'}`);
+}
+
+// ===================== NOTIFS =====================
+function showNotif(msg, bg) {
+  const el = document.createElement('div');
+  el.className = 'notif'; el.textContent = msg; el.style.background = bg || '#8B1A1A';
+  document.getElementById('nc').appendChild(el);
+  setTimeout(() => el.remove(), 4000);
+}
+
+// ===================== MATI AI =====================
+function toggleMati() {
+  matiOpen = !matiOpen;
+  document.getElementById('mpanel').classList.toggle('open', matiOpen);
+}
+
+function addMatiMsg(text, role) {
+  const el = document.createElement('div');
+  el.className = 'mmsg ' + role; el.textContent = text;
+  const msgs = document.getElementById('mmsgs');
+  msgs.appendChild(el); msgs.scrollTop = 9999;
+}
+
+async function sendMati() {
+  const inp = document.getElementById('minput');
+  const q = inp.value.trim(); if (!q) return;
+  inp.value = ''; addMatiMsg(q, 'user');
+  const thinking = document.createElement('div');
+  thinking.className = 'mmsg ai'; thinking.textContent = '⏳ Mati réfléchit...';
+  document.getElementById('mmsgs').appendChild(thinking);
+  document.getElementById('mmsgs').scrollTop = 9999;
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 300,
+        system: getMatiSystem(),
+        messages: [{role:'user', content:q}]
+      })
+    });
+    const data = await res.json();
+    thinking.remove();
+    const reply = data.content?.[0]?.text || "Désolée, pouvez-vous reformuler ?";
+    addMatiMsg(reply, 'ai');
+    speakMati(reply);
+  } catch(e) {
+    thinking.remove();
+    const r = getFallback(q);
+    addMatiMsg(r, 'ai');
+    speakMati(r);
+  }
+}
+
+function getFallback(q) {
+  q = q.toLowerCase();
+  if (q.includes('tchep') || q.includes('thiéboud')) return '🍚 Notre Tchep est notre spécialité ! À partir de 3000 francs. Le Tchep au mouton est le favori à 4000 francs !';
+  if (q.includes('prix') || q.includes('combien'))   return '💰 Nos prix vont de 500 F pour les boissons à 5000 F pour la Soupe du pêcheur. Quel plat vous intéresse ?';
+  if (q.includes('commander'))                        return '📱 Commandez directement sur l\'app ou via WhatsApp au +225 0787483004 !';
+  if (q.includes('soir') || q.includes('spécial'))   return '🌙 Ce soir : Poulet et Poisson braisés ou au four, à partir de 4000 F !';
+  if (q.includes('boisson') || q.includes('boire'))  return '🥤 Nous avons du Bissap, Gingembre, Tamarin à 3000 F, et nos cocktails maison ! Thé à la menthe à 1000 F.';
+  return '👑 Je suis Mati ! Posez-moi une question sur notre menu, les prix ou passez votre commande via WhatsApp !';
+}
+
+// ===================== ADMIN =====================
+function requireAdmin() {
+  document.getElementById('pwd-input').value = '';
+  document.getElementById('login-overlay').classList.add('show');
+  setTimeout(() => document.getElementById('pwd-input').focus(), 100);
+}
+function checkPwd() {
+  if (document.getElementById('pwd-input').value === ADMIN_PWD) {
+    closeLogin(); openAdmin();
+    speakMati("Bienvenue, mode administrateur activé.");
+  } else {
+    showNotif('❌ Mot de passe incorrect !', '#8B1A1A');
+    speakMati("Mot de passe incorrect. Accès refusé.");
+    document.getElementById('pwd-input').value = '';
+  }
+}
+function closeLogin() { document.getElementById('login-overlay').classList.remove('show'); }
+
+function openAdmin() {
+  renderAdminCatSelect(); renderAdminList();
+  document.getElementById('adm-overlay').classList.add('show');
+}
+function closeAdmin() { document.getElementById('adm-overlay').classList.remove('show'); }
+
+function renderAdminCatSelect() {
+  const cats = [...new Set(MENU.map(p => p.cat))];
+  document.getElementById('a-cat').innerHTML =
+    '<option value="">-- Catégorie existante --</option>' +
+    cats.map(c => `<option value="${c}">${c}</option>`).join('');
+}
+
+function addProduct() {
+  const name = document.getElementById('a-name').value.trim();
+  if (!name) { showNotif('⚠️ Nom requis !', '#8B1A1A'); return; }
+  const cat = document.getElementById('a-newcat').value.trim() || document.getElementById('a-cat').value;
+  if (!cat) { showNotif('⚠️ Catégorie requise !', '#8B1A1A'); return; }
+  const price    = parseInt(document.getElementById('a-price').value)  || 0;
+  const initStock= parseInt(document.getElementById('a-stock').value)  || 20;
+  const img      = document.getElementById('a-img').value.trim()   || 'https://images.unsplash.com/photo-1504544750208-dc0358e63f7f?w=400&q=80';
+  const emoji    = document.getElementById('a-emoji').value.trim() || '🍽';
+  const newId    = Date.now();
+  MENU.push({id:newId, name, cat, price, stock:initStock, emoji, img});
+  stock[newId] = initStock;
+  saveAll();
+  renderCatBar(); renderMenu(); renderAdminCatSelect(); renderAdminList();
+  document.getElementById('a-name').value = '';
+  document.getElementById('a-price').value = '';
+  document.getElementById('a-stock').value = '20';
+  document.getElementById('a-img').value = '';
+  document.getElementById('a-emoji').value = '🍽';
+  document.getElementById('a-newcat').value = '';
+  showNotif('✅ ' + name + ' ajouté au menu !', '#2D7A4D');
+  speakMati(`Le produit ${name} a été ajouté au menu avec succès. Je le connais désormais !`);
+}
+
+function deleteProduct(id) {
+  const p = MENU.find(x => x.id === id);
+  if (!confirm(`Supprimer "${p.name}" du menu ?`)) return;
+  MENU = MENU.filter(x => x.id !== id);
+  delete stock[id];
+  saveAll();
+  renderCatBar(); renderMenu(); renderAdminList();
+  showNotif('🗑 Produit supprimé', '#B8860B');
+  speakMati(`${p.name} a été retiré du menu.`);
+}
+
+function renderAdminList() {
+  const q = (document.getElementById('a-search')?.value || '').toLowerCase();
+  const filtered = MENU.filter(p => p.name.toLowerCase().includes(q) || p.cat.toLowerCase().includes(q));
+  document.getElementById('adm-list').innerHTML = filtered.map(p => `
+    <div class="prod-row">
+      <img src="${p.img||''}" onerror="this.style.display='none'" alt=""/>
+      <div class="pi">
+        <b>${p.emoji||''} ${p.name}</b>
+        <span>${p.cat} • ${p.price===0?'Sur demande':p.price.toLocaleString()+' F'} • Stock: ${stock[p.id]||0}</span>
+      </div>
+      <button class="delbtn" onclick="deleteProduct(${p.id})">🗑</button>
+    </div>`).join('') || '<p style="color:#999;font-size:13px;padding:10px;">Aucun produit trouvé</p>';
+}
+
+// ===================== INIT =====================
+renderCatBar();
+renderMenu();
+updateCartUI();
+</script>
+</body>
+</html>
