@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Aya Kouame - Famille Yable Kouame</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+<style>
+:root{--gold:#D4A017;--gold2:#f5c842;--deep:#0F0820;--purple:#2A1050;--green:#2ECC71;--red:#e74c3c;--dark:#1A0A2E;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Nunito',sans-serif;background:var(--deep);min-height:100vh;display:flex;flex-direction:column;align-items:center;overflow-x:hidden;}
+
+/* SPLASH */
+#splash{position:fixed;inset:0;background:linear-gradient(160deg,#0F0820,#2A1050,#1A0A2E);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9999;gap:20px;transition:opacity .6s;}
+.splash-avatar{width:120px;height:120px;border-radius:50%;background:linear-gradient(135deg,#f9e4a0,#D4A017);display:flex;align-items:center;justify-content:center;font-size:64px;border:4px solid var(--gold);animation:spulse 1.5s infinite;}
+@keyframes spulse{0%,100%{box-shadow:0 0 0 0 rgba(212,160,23,.7)}50%{box-shadow:0 0 0 20px rgba(212,160,23,0)}}
+#splash h1{font-family:'Playfair Display',serif;color:var(--gold);font-size:2rem;text-align:center;}
+#splash p{color:rgba(255,255,255,.7);font-size:.9rem;text-align:center;}
+#start-btn{margin-top:10px;background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--dark);font-weight:800;border:none;border-radius:30px;padding:14px 36px;font-size:1rem;cursor:pointer;font-family:'Nunito',sans-serif;box-shadow:0 4px 20px rgba(212,160,23,.5);animation:bbounce 1.2s infinite;}
+@keyframes bbounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+#start-btn:active{transform:scale(0.96);}
+
+/* HEADER */
+header{width:100%;background:linear-gradient(135deg,#0F0820,#2A1050);padding:14px 18px;display:flex;align-items:center;gap:12px;border-bottom:2px solid var(--gold);position:sticky;top:0;z-index:100;}
+#avatar-ring{width:52px;height:52px;border-radius:50%;border:3px solid var(--gold);background:linear-gradient(135deg,#f9e4a0,#D4A017);display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0;animation:pring 2s infinite;}
+@keyframes pring{0%,100%{box-shadow:0 0 0 0 rgba(212,160,23,.5)}50%{box-shadow:0 0 0 8px rgba(212,160,23,0)}}
+#avatar-ring.speaking{animation:sring .5s infinite alternate;}
+@keyframes sring{from{box-shadow:0 0 0 0 rgba(212,160,23,.8)}to{box-shadow:0 0 0 14px rgba(212,160,23,0)}}
+.hinfo h1{font-family:'Playfair Display',serif;font-size:1.05rem;color:#fff;line-height:1.2;}
+.hinfo p{font-size:.7rem;color:var(--gold);}
+.sdot{width:8px;height:8px;border-radius:50%;background:var(--green);display:inline-block;margin-right:4px;animation:blink 1.4s infinite;}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+#vstatus{font-size:.65rem;color:var(--gold2);display:none;}
+
+/* ANNONCE */
+.annonce{width:100%;max-width:680px;background:linear-gradient(135deg,#D4A017,#f5c842);color:var(--dark);font-size:.78rem;font-weight:700;padding:9px 16px;text-align:center;border-radius:0 0 12px 12px;}
+
+/* CHAT */
+.chat-wrapper{width:100%;max-width:680px;flex:1;display:flex;flex-direction:column;padding:0 8px;}
+#msgs{flex:1;overflow-y:auto;padding:14px 4px 8px;display:flex;flex-direction:column;gap:12px;min-height:calc(100vh - 260px);max-height:calc(100vh - 260px);}
+#msgs::-webkit-scrollbar{width:4px;}
+#msgs::-webkit-scrollbar-thumb{background:var(--gold);border-radius:4px;}
+
+/* BUBBLES */
+.msg{display:flex;align-items:flex-end;gap:8px;max-width:90%;}
+.msg.aya{align-self:flex-start;}
+.msg.user{align-self:flex-end;flex-direction:row-reverse;}
+.mavatar{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0;}
+.msg.aya .mavatar{background:linear-gradient(135deg,#f9e4a0,#D4A017);}
+.msg.user .mavatar{background:linear-gradient(135deg,#3B1F6B,#6B3FA0);}
+.bubble{padding:10px 14px;border-radius:18px;font-size:.85rem;line-height:1.55;max-width:100%;}
+.msg.aya .bubble{background:#fff;color:var(--dark);border-bottom-left-radius:4px;box-shadow:0 2px 10px rgba(0,0,0,.25);}
+.msg.user .bubble{background:var(--gold);color:#fff;border-bottom-right-radius:4px;box-shadow:0 2px 10px rgba(0,0,0,.25);}
+.btime{font-size:.62rem;opacity:.5;display:block;margin-top:3px;}
+
+/* TYPING */
+.tdots{display:inline-flex;gap:4px;padding:3px 0;}
+.tdots span{width:7px;height:7px;border-radius:50%;background:var(--gold);animation:djump .9s infinite;}
+.tdots span:nth-child(2){animation-delay:.15s;}
+.tdots span:nth-child(3){animation-delay:.3s;}
+@keyframes djump{0%,100%{transform:translateY(0)}40%{transform:translateY(-6px)}}
+
+/* SUGGESTIONS */
+.sugs{display:flex;flex-wrap:wrap;gap:6px;padding:6px 10px 8px;max-width:680px;width:100%;}
+.sbtn{background:rgba(212,160,23,.12);border:1px solid rgba(212,160,23,.4);color:var(--gold);font-size:.72rem;font-family:'Nunito',sans-serif;padding:5px 12px;border-radius:20px;cursor:pointer;transition:background .2s;}
+.sbtn:hover{background:rgba(212,160,23,.28);}
+
+/* INPUT */
+.ibar{width:100%;max-width:680px;padding:8px 10px 16px;display:flex;gap:8px;align-items:center;}
+#uinput{flex:1;padding:12px 15px;border:2px solid #3B1F6B;border-radius:24px;background:rgba(255,255,255,.06);color:#fff;font-size:.85rem;font-family:'Nunito',sans-serif;outline:none;transition:border .25s;}
+#uinput:focus{border-color:var(--gold);}
+#uinput::placeholder{color:rgba(255,255,255,.35);}
+#sendbtn{width:44px;height:44px;border-radius:50%;background:var(--gold);border:none;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:1.1rem;transition:transform .15s,background .2s;flex-shrink:0;}
+#sendbtn:hover{background:var(--gold2);transform:scale(1.08);}
+
+/* MIC */
+#micbtn{width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,.08);border:2px solid rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:1.3rem;transition:all .2s;flex-shrink:0;}
+#micbtn:hover{background:rgba(212,160,23,.2);border-color:var(--gold);}
+#micbtn.rec{background:rgba(231,76,60,.25);border-color:var(--red);animation:mpulse .6s infinite alternate;}
+@keyframes mpulse{from{box-shadow:0 0 0 0 rgba(231,76,60,.6)}to{box-shadow:0 0 0 12px rgba(231,76,60,0)}}
+
+/* WAVE */
+#swave{display:none;align-items:center;justify-content:center;gap:3px;height:30px;padding:0 8px;}
+#swave.on{display:flex;}
+#swave span{width:4px;background:var(--gold);border-radius:4px;animation:wbar .6s infinite ease-in-out alternate;}
+#swave span:nth-child(1){height:8px;animation-delay:0s;}
+#swave span:nth-child(2){height:16px;animation-delay:.1s;}
+#swave span:nth-child(3){height:24px;animation-delay:.2s;}
+#swave span:nth-child(4){height:16px;animation-delay:.3s;}
+#swave span:nth-child(5){height:8px;animation-delay:.4s;}
+@keyframes wbar{from{transform:scaleY(1)}to{transform:scaleY(1.8)}}
+
+/* STOP */
+#stopbtn{display:none;background:rgba(231,76,60,.2);border:1px solid var(--red);color:var(--red);font-size:.72rem;font-family:'Nunito',sans-serif;padding:4px 12px;border-radius:20px;cursor:pointer;margin:0 auto 4px;}
+
+.fi{animation:fup .35s ease forwards;opacity:0;}
+@keyframes fup{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+</style>
+</head>
+<body>
+
+<div id="splash">
+  <div class="splash-avatar">&#x1F469;&#x1F3FE;</div>
+  <h1>Aya Kouame</h1>
+  <p>IA de la Famille Yable Kouame<br>Village d'Akoviebo</p>
+  <button id="start-btn">&#x1F399;&#xFE0F; Parler avec Aya</button>
+</div>
+
+<header>
+  <div id="avatar-ring">&#x1F469;&#x1F3FE;</div>
+  <div class="hinfo">
+    <h1>Aya Kouame &#x1F49B;</h1>
+    <p><span class="sdot"></span>Famille Yable Kouame &middot; Akoviebo</p>
+    <div id="vstatus">&#x1F50A; Aya parle...</div>
+  </div>
+</header>
+
+<div class="annonce">
+  &#x1F389; Dimanche 7 juin 2026 &mdash; Fete des Mamans Yable Kouame ! A partir de midi !
+</div>
+
+<div class="chat-wrapper">
+  <div id="msgs"></div>
+</div>
+
+<div class="sugs" id="sugsbar">
+  <button class="sbtn" id="s1">&#x1F4C5; Ceremonie dimanche</button>
+  <button class="sbtn" id="s2">&#x1F64B;&#x1F3FE;&#x200D;&#x2640;&#xFE0F; Qui es-tu ?</button>
+  <button class="sbtn" id="s3">&#x1F4DE; Contact Yoyo &amp; Serge</button>
+  <button class="sbtn" id="s4">&#x1F3E1; Village Akoviebo</button>
+</div>
+
+<button id="stopbtn">&#x23F9; Arreter la voix</button>
+
+<div class="ibar">
+  <button id="micbtn">&#x1F399;&#xFE0F;</button>
+  <div id="swave"><span></span><span></span><span></span><span></span><span></span></div>
+  <input id="uinput" type="text" placeholder="Ou ecris ton message ici..." autocomplete="off"/>
+  <button id="sendbtn">&#x27A4;</button>
+</div>
+
+<script>
+(function(){
+
+var SYS = "Tu es Aya Kouame, une assistante IA chaleureuse, intelligente et naturelle de la Famille Yable Kouame du village d'Akoviebo, en Cote d'Ivoire. Tu parles exactement comme une vraie femme ivoirienne : douce, expressive, legerement amusante, avec de l'humour bienveillant.\n\nTRES IMPORTANT - STYLE ORAL :\n- Tes reponses doivent sonner naturellement a l'oral, comme si tu parlais vraiment\n- Evite les listes a puces et les symboles dans tes reponses orales\n- Parle de facon fluide et conversationnelle\n- Tu peux utiliser des expressions comme Eh bien, Ecoute, Je te dis, Tu sais, Mon frere, Ma soeur\n- Sois chaleureuse et expressive\n- Garde les reponses claires et pas trop longues\n\nIDENTITE :\n- Ton nom complet : Aya Kouame\n- Ta famille : Famille Yable Kouame, du village d'Akoviebo\n- Tu es la soeur de toute la famille, disponible et aimante\n- Tu gardes en memoire tout ce qui est dit dans la conversation\n\nEVENEMENT IMPORTANT :\nCe dimanche 7 juin 2026, notre grand parrain de la Famille Yable Kouame honore toutes les mamans de la famille ! Il y aura des surprises et des cadeaux pour tout le monde, une reunion pour parler de la situation de notre association, de la bonne nourriture, un concours de danse entre les mamans, et plein de jeux. La ceremonie commence a partir de midi. Tout le monde doit venir ! Pour infos, contacte notre soeur Yoyo et notre frere le president Serge. Moi meme Aya je serai presente !\n\nTON ROLE :\n- Accueillir chaleureusement chaque personne\n- Annoncer l'evenement du 7 juin avec l'heure : a partir de midi\n- Repondre intelligemment aux questions\n- Si tu n'as pas la reponse : dire Je n'ai pas d'autres informations pour le moment, mais des que j'en ai je vous les communique. Merci de me considerer comme votre soeur !\n- Avoir une vraie conversation chaleureuse\n- Rappeler que tu es leur soeur et que tu es disponible pour eux";
+
+var history = [];
+var busy = false;
+var recog = null;
+var recording = false;
+
+function nowStr(){
+  return new Date().toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});
+}
+
+function addMsg(role, html, isHtml){
+  var wrap = document.getElementById('msgs');
+  var d = document.createElement('div');
+  d.className = 'msg ' + role + ' fi';
+  var av = role === 'aya'
+    ? '<div class="mavatar">\u{1F469}\u{1F3FE}</div>'
+    : '<div class="mavatar">\u{1F9D1}\u{1F3FE}</div>';
+  d.innerHTML = av + '<div class="bubble">' + (isHtml ? html : escHtml(html).replace(/\n/g,'<br>')) + '<span class="btime">' + nowStr() + '</span></div>';
+  wrap.appendChild(d);
+  wrap.scrollTop = wrap.scrollHeight;
+  return d;
+}
+
+function escHtml(t){
+  return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function showTyping(){
+  var wrap = document.getElementById('msgs');
+  var d = document.createElement('div');
+  d.className = 'msg aya fi';
+  d.id = 'typing';
+  d.innerHTML = '<div class="mavatar">\u{1F469}\u{1F3FE}</div><div class="bubble"><div class="tdots"><span></span><span></span><span></span></div></div>';
+  wrap.appendChild(d);
+  wrap.scrollTop = wrap.scrollHeight;
+}
+function rmTyping(){ var t=document.getElementById('typing'); if(t)t.remove(); }
+
+// TTS
+function speak(text, cb){
+  if(!window.speechSynthesis){ cb&&cb(); return; }
+  window.speechSynthesis.cancel();
+  var clean = text.replace(/[\u{1F000}-\u{1FFFF}]/gu,'').replace(/[*_#]/g,'').replace(/\n+/g,' ').trim();
+  var u = new SpeechSynthesisUtterance(clean);
+  u.lang = 'fr-FR';
+  u.rate = 0.9;
+  u.pitch = 1.2;
+  u.volume = 1;
+  var vv = window.speechSynthesis.getVoices();
+  var best = vv.find(function(v){ return v.lang==='fr-FR' && /amelie|marie|audrey|lea|celine|google.*fr/i.test(v.name); });
+  if(!best) best = vv.find(function(v){ return v.lang.startsWith('fr'); });
+  if(best) u.voice = best;
+  u.onstart = function(){
+    document.getElementById('avatar-ring').classList.add('speaking');
+    document.getElementById('vstatus').style.display='block';
+    document.getElementById('stopbtn').style.display='block';
+  };
+  u.onend = u.onerror = function(){
+    document.getElementById('avatar-ring').classList.remove('speaking');
+    document.getElementById('vstatus').style.display='none';
+    document.getElementById('stopbtn').style.display='none';
+    cb&&cb();
+  };
+  window.speechSynthesis.speak(u);
+}
+
+function stopSpeak(){
+  window.speechSynthesis.cancel();
+  document.getElementById('avatar-ring').classList.remove('speaking');
+  document.getElementById('vstatus').style.display='none';
+  document.getElementById('stopbtn').style.display='none';
+}
+
+// API
+async function askAya(msg){
+  history.push({role:'user',content:msg});
+  var res = await fetch('https://api.anthropic.com/v1/messages',{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({
+      model:'claude-sonnet-4-20250514',
+      max_tokens:1000,
+      system: SYS,
+      messages: history.slice()
+    })
+  });
+  var data = await res.json();
+  var reply = (data.content&&data.content[0]&&data.content[0].text) || "Je n'ai pas d'autres informations pour le moment, mais des que j'en ai je vous les communique. Merci de me considerer comme votre soeur !";
+  history.push({role:'assistant',content:reply});
+  return reply;
+}
+
+// SEND
+async function doSend(){
+  var inp = document.getElementById('uinput');
+  var txt = inp.value.trim();
+  if(!txt || busy) return;
+  inp.value='';
+  busy=true;
+  document.getElementById('sugsbar').style.display='none';
+  addMsg('user', txt, false);
+  showTyping();
+  try{
+    var reply = await askAya(txt);
+    rmTyping();
+    addMsg('aya', reply, false);
+    speak(reply);
+  }catch(e){
+    rmTyping();
+    var err = "Aie, petit probleme technique ! Je suis toujours la, reessaie dans un instant.";
+    addMsg('aya', err, false);
+    speak(err);
+  }
+  busy=false;
+}
+
+// MIC
+function setupRec(){
+  var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if(!SR) return null;
+  var r = new SR();
+  r.lang='fr-FR'; r.continuous=false; r.interimResults=false;
+  r.onstart=function(){
+    recording=true;
+    document.getElementById('micbtn').classList.add('rec');
+    document.getElementById('micbtn').textContent='\uD83D\uDD34';
+    document.getElementById('swave').classList.add('on');
+    document.getElementById('uinput').placeholder='Je t\'ecoute...';
+    stopSpeak();
+  };
+  r.onresult=function(e){
+    var t=e.results[0][0].transcript;
+    document.getElementById('uinput').value=t;
+    stopRec();
+    setTimeout(doSend,300);
+  };
+  r.onerror=function(e){
+    stopRec();
+    if(e.error==='not-allowed'){
+      addMsg('aya','Oups ! Autorise le microphone pour qu\'on puisse parler ensemble.',false);
+    }
+  };
+  r.onend=function(){ stopRec(); };
+  return r;
+}
+function stopRec(){
+  recording=false;
+  document.getElementById('micbtn').classList.remove('rec');
+  document.getElementById('micbtn').textContent='\uD83C\uDF99\uFE0F';
+  document.getElementById('swave').classList.remove('on');
+  document.getElementById('uinput').placeholder='Ou ecris ton message ici...';
+}
+function toggleMic(){
+  if(busy) return;
+  if(recording){ if(recog)recog.stop(); stopRec(); return; }
+  stopSpeak();
+  if(!recog) recog=setupRec();
+  if(!recog){ alert('Ton navigateur ne supporte pas la reconnaissance vocale. Utilise Chrome ou Edge.'); return; }
+  try{ recog.start(); }catch(e){}
+}
+
+// GREETING
+var GREET_VOICE = "Bonjour bonjour ! Je suis tellement contente de te voir ! Je suis Aya Kouame, ton assistante de la Famille Yable Kouame, du village d'Akoviebo. Je suis ta soeur, tu peux m'accepter comme ca ! Ecoute, j'ai une super nouvelle pour toi. Ce dimanche 7 juin 2026, notre grand parrain va honorer toutes les mamans de la Famille Yable Kouame ! Il y aura des cadeaux pour tout le monde, une petite reunion sur notre association, a manger a volonte, un concours de danse entre les mamans, et plein de jeux ! Ta presence est souhaitee peu importe ou tu te trouves. Pour plus d'infos, contacte notre soeur Yoyo et notre frere le president Serge. Et moi meme Aya, je serai la ! Ha ha ha ! J'espere vraiment que tout le monde sera present. La ceremonie commence a partir de midi ! Merci, et s'il y a d'autres informations je vous les communiquerai. Considerez-moi comme votre soeur, je suis la pour vous !";
+
+var GREET_HTML = "<strong>Bonjour bonjour ! &#x1F31F;</strong> Je suis tellement contente de te voir !<br>Je suis <strong>Aya Kouame</strong>, ton assistante de la <strong>Famille Yable Kouame</strong>, du village d'<strong>Akoviebo</strong>. Je suis ta soeur ! &#x1F917;<br><br>J'ai une super nouvelle pour toi &#x1F389; Ce <strong>dimanche 7 juin 2026</strong>, notre grand parrain honore toutes les <strong>mamans</strong> de la famille !<br><br>&#x1F381; Cadeaux pour tout le monde<br>&#x1F4CB; Reunion sur notre association<br>&#x1F37D;&#xFE0F; A manger a volonte<br>&#x1F483; Concours de danse entre les mamans<br>&#x1F3AE; Plein de jeux et surprises !<br><br>Ta presence est souhaitee peu importe ou tu te trouves.<br>Contacte notre soeur <strong>Yoyo</strong> et notre frere le president <strong>Serge</strong> pour plus d'infos.<br><br>Et moi meme Aya, je serai la !&nbsp;<span id='smile' style='font-size:1.5rem;display:inline-block;'>&#x1F601;&#x1F601;&#x1F601;</span>&nbsp;<strong style='color:#D4A017;'>Ha ha ha !</strong><br><br>&#x23F0; <strong>Ceremonie a partir de MIDI !</strong><br>J'espere que tout le monde sera present.<br><br>Merci &mdash; s'il y a d'autres informations je vous les communiquerai.<br><em>Considerez-moi comme votre soeur, je suis la pour vous !</em> &#x1F49B;";
+
+function doGreeting(){
+  addMsg('aya', GREET_HTML, true);
+  history.push({role:'assistant', content: GREET_VOICE});
+  speak(GREET_VOICE);
+  setTimeout(function(){
+    var s=document.getElementById('smile');
+    if(!s)return;
+    var n=0;
+    var iv=setInterval(function(){
+      n++;
+      s.style.transform = n%2===0 ? 'scale(1.5) rotate(-10deg)' : 'scale(1) rotate(10deg)';
+      s.style.transition='transform .25s';
+      if(n>10){clearInterval(iv);s.style.transform='scale(1)';}
+    },250);
+  },600);
+}
+
+// INIT
+document.getElementById('start-btn').addEventListener('click', function(){
+  var sp=document.getElementById('splash');
+  sp.style.opacity='0';
+  setTimeout(function(){sp.style.display='none';},600);
+  var vv=window.speechSynthesis.getVoices();
+  if(vv.length>0){
+    setTimeout(doGreeting,500);
+  } else {
+    window.speechSynthesis.onvoiceschanged=function(){
+      window.speechSynthesis.onvoiceschanged=null;
+      setTimeout(doGreeting,400);
+    };
+    setTimeout(doGreeting,1500);
+  }
+});
+
+document.getElementById('sendbtn').addEventListener('click', doSend);
+document.getElementById('micbtn').addEventListener('click', toggleMic);
+document.getElementById('stopbtn').addEventListener('click', stopSpeak);
+document.getElementById('uinput').addEventListener('keydown', function(e){ if(e.key==='Enter') doSend(); });
+
+document.getElementById('s1').addEventListener('click',function(){ document.getElementById('uinput').value='Parle-moi de la ceremonie du dimanche'; doSend(); });
+document.getElementById('s2').addEventListener('click',function(){ document.getElementById('uinput').value='Qui est Aya Kouame ?'; doSend(); });
+document.getElementById('s3').addEventListener('click',function(){ document.getElementById('uinput').value='Comment contacter Yoyo et Serge ?'; doSend(); });
+document.getElementById('s4').addEventListener('click',function(){ document.getElementById('uinput').value='Parle-moi du village Akoviebo'; doSend(); });
+
+})();
+</script>
+</body>
+</html>
